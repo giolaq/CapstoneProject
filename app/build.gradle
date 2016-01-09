@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -25,5 +32,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile project(':BaseGameUtils')
+    compile 'com.github.kaaes:spotify-web-api-android:0.2.0'
+
 
 }

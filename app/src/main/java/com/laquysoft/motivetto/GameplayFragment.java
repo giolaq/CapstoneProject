@@ -18,12 +18,20 @@ package com.laquysoft.motivetto;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Album;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Fragment for the gameplay portion of the game. It shows the keypad
@@ -66,6 +74,30 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     public void onStart() {
         super.onStart();
         updateUi();
+        retrieveSpotifyRandomSongs();
+    }
+
+    private void retrieveSpotifyRandomSongs() {
+        SpotifyApi api = new SpotifyApi();
+
+
+// Most (but not all) of the Spotify Web API endpoints require authorisation.
+// If you know you'll only use the ones that don't require authorisation you can skip this step
+        api.setAccessToken("myAccessToken");
+
+        SpotifyService spotify = api.getService();
+
+        spotify.getAlbum("2dIGnmEIy1WZIcZCFSj6i8", new Callback<Album>() {
+            @Override
+            public void success(Album album, Response response) {
+                Log.d("Album success", album.name);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Album failure", error.toString());
+            }
+        });
     }
 
     void updateUi() {
