@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_id">1046770242176</string>
+
+    <string name="achievement_prime">CgkIgKX5wrseEAIQAg</string>
+    <string name="achievement_really_bored">CgkIgKX5wrseEAIQAw</string>
+    <string name="achievement_bored">CgkIgKX5wrseEAIQBA</string>
+    <string name="achievement_humble">CgkIgKX5wrseEAIQBQ</string>
+    <string name="achievement_arrogant">CgkIgKX5wrseEAIQBg</string>
+    <string name="achievement_leet">CgkIgKX5wrseEAIQBw</string>
+
+    <string name="leaderboard_easy">CgkIgKX5wrseEAIQCA</string>
+    <string name="leaderboard_hard">CgkIgKX5wrseEAIQCQ</string>
+</resources>
