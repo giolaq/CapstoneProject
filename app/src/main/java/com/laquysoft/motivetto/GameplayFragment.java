@@ -16,6 +16,8 @@
 
 package com.laquysoft.motivetto;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,9 +28,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -38,27 +45,167 @@ import retrofit.client.Response;
  * where the user can request their score.
  *
  * @author Bruno Oliveira (Google)
- *
  */
-public class GameplayFragment extends Fragment implements OnClickListener {
+public class GameplayFragment extends Fragment implements OnClickListener,
+        MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener,
+        MediaPlayer.OnCompletionListener {
+
+    private static final String LOG_TAG = GameplayFragment.class.getSimpleName();
     int mRequestedScore = 5000;
 
     static int[] MY_BUTTONS = {
-        R.id.digit_button_0, R.id.digit_button_1, R.id.digit_button_2,
-        R.id.digit_button_3, R.id.digit_button_4, R.id.digit_button_5,
-        R.id.digit_button_6, R.id.digit_button_7, R.id.digit_button_8,
-        R.id.digit_button_9, R.id.digit_button_clear, R.id.ok_score_button
+            R.id.digit_button_0, R.id.digit_button_1, R.id.digit_button_2,
+            R.id.digit_button_3, R.id.digit_button_4, R.id.digit_button_5,
+            R.id.digit_button_6, R.id.digit_button_7, R.id.digit_button_8,
+            R.id.digit_button_9, R.id.digit_button_clear, R.id.ok_score_button
     };
+    private MediaPlayer mMediaPlayer;
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+
+    }
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        Log.e(LOG_TAG, "Error during Playback!");
+        return false;    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        Log.d(LOG_TAG, "Track prepared");
+        mMediaPlayer.seekTo(0);
+        mMediaPlayer.start();
+    }
 
     public interface Listener {
         public void onEnteredScore(int score);
+
+        public String onAccessToken();
     }
 
     Listener mListener = null;
 
+
+    /**
+     * Words list to select from
+     */
+    String wordsList[] = {
+            "Help",
+            "Love",
+            "Hate",
+            "Desperate",
+            "Open",
+            "Close",
+            "Baby",
+            "Girl",
+            "Yeah",
+            "Whoa",
+            "Start",
+            "Finish",
+            "Beginning",
+            "End",
+            "Fight",
+            "War",
+            "Running",
+            "Want",
+            "Need",
+            "Fire",
+            "Myself",
+            "Alive",
+            "Life",
+            "Dead",
+            "Death",
+            "Kill",
+            "Different",
+            "Alone",
+            "Lonely",
+            "Darkness",
+            "Home",
+            "Gone",
+            "Break",
+            "Heart",
+            "Floating",
+            "Searching",
+            "Dreaming",
+            "Serenity",
+            "Star",
+            "Recall",
+            "Think",
+            "Feel",
+            "Slow",
+            "Speed",
+            "Fast",
+            "World",
+            "Work",
+            "Miss",
+            "Stress",
+            "Please",
+            "More",
+            "Less",
+            "only",
+            "World",
+            "Moving",
+            "lasting",
+            "Rise",
+            "Save",
+            "Wake",
+            "Over",
+            "High",
+            "Above",
+            "Taking",
+            "Go",
+            "Why",
+            "Before",
+            "After",
+            "Along",
+            "See",
+            "Hear",
+            "Feel",
+            "Change",
+            "Body",
+            "Being",
+            "Soul",
+            "Spirit",
+            "God",
+            "Angel",
+            "Devil",
+            "Demon",
+            "Believe",
+            "Away",
+            "Everything",
+            "Shared",
+            "Something",
+            "Everything",
+            "Control",
+            "Heart",
+            "Away",
+            "Waiting",
+            "Loyalty",
+            "Shared",
+            "Remember",
+            "Yesterday",
+            "Today",
+            "Tomorrow",
+            "Fall",
+            "Memories",
+            "Apart",
+            "Time",
+            "Forever",
+            "Breath",
+            "Lie",
+            "Sleep",
+            "Inside",
+            "Outside",
+            "Catch",
+            "Be",
+            "Pretending"
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gameplay, container, false);
         for (int i : MY_BUTTONS) {
             ((Button) v.findViewById(i)).setOnClickListener(this);
@@ -82,15 +229,29 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
 
 // Most (but not all) of the Spotify Web API endpoints require authorisation.
-// If you know you'll only use the ones that don't require authorisation you can skip this step
-        api.setAccessToken("myAccessToken");
+// If you know you"ll only use the ones that don"t require authorisation you can skip this step
+        api.setAccessToken(mListener.onAccessToken());
 
         SpotifyService spotify = api.getService();
 
-        spotify.getAlbum("2dIGnmEIy1WZIcZCFSj6i8", new Callback<Album>() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("limit", 1);
+        parameters.put("offset", new Random().nextInt(5));
+
+        StringBuilder builder = new StringBuilder();
+        for (String s : selectWords(4)) {
+            builder.append(s + " ");
+        }
+
+        spotify.searchTracks(builder.toString(), parameters, new Callback<TracksPager>() {
             @Override
-            public void success(Album album, Response response) {
-                Log.d("Album success", album.name);
+            public void success(TracksPager tracksPager, Response response) {
+                if (tracksPager.tracks.items.size() > 0) {
+                    String trackUrl = tracksPager.tracks.items.get(0).preview_url;
+                    Log.d("Track success", trackUrl);
+                    playTrack(trackUrl);
+                }
+
             }
 
             @Override
@@ -109,27 +270,58 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-        case R.id.digit_button_clear:
-            mRequestedScore = 0;
-            updateUi();
-            break;
-        case R.id.digit_button_0:
-        case R.id.digit_button_1:
-        case R.id.digit_button_2:
-        case R.id.digit_button_3:
-        case R.id.digit_button_4:
-        case R.id.digit_button_5:
-        case R.id.digit_button_6:
-        case R.id.digit_button_7:
-        case R.id.digit_button_8:
-        case R.id.digit_button_9:
-            int x = Integer.parseInt(((Button)view).getText().toString().trim());
-            mRequestedScore = (mRequestedScore * 10 + x) % 10000;
-            updateUi();
-            break;
-        case R.id.ok_score_button:
-            mListener.onEnteredScore(mRequestedScore);
-            break;
+            case R.id.digit_button_clear:
+                mRequestedScore = 0;
+                updateUi();
+                break;
+            case R.id.digit_button_0:
+            case R.id.digit_button_1:
+            case R.id.digit_button_2:
+            case R.id.digit_button_3:
+            case R.id.digit_button_4:
+            case R.id.digit_button_5:
+            case R.id.digit_button_6:
+            case R.id.digit_button_7:
+            case R.id.digit_button_8:
+            case R.id.digit_button_9:
+                int x = Integer.parseInt(((Button) view).getText().toString().trim());
+                mRequestedScore = (mRequestedScore * 10 + x) % 10000;
+                updateUi();
+                break;
+            case R.id.ok_score_button:
+                mListener.onEnteredScore(mRequestedScore);
+                break;
+        }
+    }
+
+    /**
+     * Select 1 to `max` words from the words list
+     */
+    public String[] selectWords(int max) {
+        if (max < 1) max = 1;
+        int howMany = new Random().nextInt(max) + 1;
+        int listLength = wordsList.length;
+        String words[] = new String[howMany];
+        for (int i = 0; i < howMany; i++) {
+            int r = new Random().nextInt(listLength - 0 + 1);
+            words[i] = wordsList[r];
+        }
+        return words;
+    }
+
+    private void playTrack(String previewUrl) {
+
+        //Start Media Player
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnErrorListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+        try {
+            mMediaPlayer.setDataSource(previewUrl);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -2,6 +2,7 @@
 
 <resources>
     <string name="app_id">1046770242176</string>
+    <string name="spotify_client_id">9319f796670a434daf4c6ddd7e123f7d</string>
 
     <string name="achievement_prime">CgkIgKX5wrseEAIQAg</string>
     <string name="achievement_really_bored">CgkIgKX5wrseEAIQAw</string>

@@ -30,6 +30,10 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
 
 /**
  * Our main activity for the game.
@@ -83,6 +87,13 @@ public class MainActivity extends FragmentActivity
     // achievements and scores we're pending to push to the cloud
     // (waiting for the user to sign in, for instance)
     AccomplishmentsOutbox mOutbox = new AccomplishmentsOutbox();
+
+
+    // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
+    private static final int REQUEST_CODE = 1337;
+    private static final String REDIRECT_URI = "yourcustomprotocol://callback";
+
+    private String token;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -203,6 +214,11 @@ public class MainActivity extends FragmentActivity
 
         // switch to the exciting "you won" screen
         switchToFragment(mWinFragment);
+    }
+
+    @Override
+    public String onAccessToken() {
+        return token;
     }
 
     // Checks if n is prime. We don't consider 0 and 1 to be prime.
@@ -326,7 +342,27 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == RC_SIGN_IN) {
+        // Check if result comes from the correct activity
+        if (requestCode == REQUEST_CODE) {
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+
+            switch (response.getType()) {
+                // Response was successful and contains auth token
+                case TOKEN:
+                    // Handle successful response
+                    token = response.getAccessToken();
+                    break;
+
+                // Auth flow returned an error
+                case ERROR:
+                    // Handle error response
+                    break;
+
+                // Most likely auth flow was cancelled
+                default:
+                    // Handle other cases
+            }
+        } else if (requestCode == RC_SIGN_IN) {
             mSignInClicked = false;
             mResolvingConnectionFailure = false;
             if (resultCode == RESULT_OK) {
@@ -364,6 +400,14 @@ public class MainActivity extends FragmentActivity
             Toast.makeText(this, getString(R.string.your_progress_will_be_uploaded),
                     Toast.LENGTH_LONG).show();
         }
+
+        AuthenticationRequest.Builder builder =
+                new AuthenticationRequest.Builder(getResources().getString(R.string.spotify_client_id), AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+        builder.setScopes(new String[]{"streaming"});
+        AuthenticationRequest request = builder.build();
+
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
     @Override
