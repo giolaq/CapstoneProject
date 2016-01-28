@@ -54,12 +54,7 @@ public class GameplayFragment extends Fragment implements OnClickListener,
     private static final String LOG_TAG = GameplayFragment.class.getSimpleName();
     int mRequestedScore = 5000;
 
-    static int[] MY_BUTTONS = {
-            R.id.digit_button_0, R.id.digit_button_1, R.id.digit_button_2,
-            R.id.digit_button_3, R.id.digit_button_4, R.id.digit_button_5,
-            R.id.digit_button_6, R.id.digit_button_7, R.id.digit_button_8,
-            R.id.digit_button_9, R.id.digit_button_clear, R.id.ok_score_button
-    };
+
     private MediaPlayer mMediaPlayer;
 
     @Override
@@ -207,9 +202,6 @@ public class GameplayFragment extends Fragment implements OnClickListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gameplay, container, false);
-        for (int i : MY_BUTTONS) {
-            ((Button) v.findViewById(i)).setOnClickListener(this);
-        }
         return v;
     }
 
@@ -270,24 +262,6 @@ public class GameplayFragment extends Fragment implements OnClickListener,
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.digit_button_clear:
-                mRequestedScore = 0;
-                updateUi();
-                break;
-            case R.id.digit_button_0:
-            case R.id.digit_button_1:
-            case R.id.digit_button_2:
-            case R.id.digit_button_3:
-            case R.id.digit_button_4:
-            case R.id.digit_button_5:
-            case R.id.digit_button_6:
-            case R.id.digit_button_7:
-            case R.id.digit_button_8:
-            case R.id.digit_button_9:
-                int x = Integer.parseInt(((Button) view).getText().toString().trim());
-                mRequestedScore = (mRequestedScore * 10 + x) % 10000;
-                updateUi();
-                break;
             case R.id.ok_score_button:
                 mListener.onEnteredScore(mRequestedScore);
                 break;
