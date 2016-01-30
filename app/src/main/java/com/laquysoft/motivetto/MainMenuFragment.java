@@ -50,7 +50,7 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_mainmenu, container, false);
         final int[] CLICKABLES = new int[] {
-                R.id.easy_mode_button, R.id.hard_mode_button,
+                R.id.easy_mode_button,
                 R.id.show_achievements_button, R.id.show_leaderboards_button,
                 R.id.sign_in_button, R.id.sign_out_button
         };
@@ -91,9 +91,6 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
         switch (view.getId()) {
         case R.id.easy_mode_button:
             mListener.onStartGameRequested(false);
-            break;
-        case R.id.hard_mode_button:
-            mListener.onStartGameRequested(true);
             break;
         case R.id.show_achievements_button:
             mListener.onShowAchievementsRequested();

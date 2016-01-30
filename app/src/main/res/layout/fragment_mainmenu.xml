@@ -47,28 +47,24 @@
             android:layout_marginBottom="10dp"
             android:id="@+id/hello" />
 
-        <TextView android:layout_width="wrap_content"
+        <Button android:id="@+id/easy_mode_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/choose_difficulty"
-            android:layout_marginBottom="20dp" />
+            android:text="@string/easy"
+            />
 
-        <LinearLayout android:orientation="horizontal"
-            android:layout_width="match_parent"
+        <Button android:id="@+id/load_game_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:text="@string/load"
+            android:layout_marginTop="20dp"/>
 
-            <Button android:id="@+id/easy_mode_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/easy"
-                android:layout_marginRight="20dp" />
 
-            <Button android:id="@+id/hard_mode_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/hard" />
-
-        </LinearLayout>
+        <Button android:id="@+id/options_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/options"
+            android:layout_marginTop="20dp"/>
 
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"

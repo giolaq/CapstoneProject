@@ -30,6 +30,7 @@
     <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
     <string name="what_score_do_you_deserve">What score do you think you deserve?</string>
     <string name="initial_input">0000</string>
+    <string name="timer">Time:time</string>
     <string name="digit0"> 0 </string>
     <string name="digit1">1</string>
     <string name="digit2">2</string>
@@ -54,4 +55,6 @@
     <string name="you_win">You win! Your score is:</string>
     <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
     <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
+    <string name="load">Load</string>
+    <string name="options">Options</string>
 </resources>

@@ -261,11 +261,6 @@ public class GameplayFragment extends Fragment implements OnClickListener,
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.ok_score_button:
-                mListener.onEnteredScore(mRequestedScore);
-                break;
-        }
     }
 
     /**
