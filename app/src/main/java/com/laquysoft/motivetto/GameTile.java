@@ -13,6 +13,7 @@ public class GameTile extends ImageView {
 
     public Coordinate coordinate;
     protected boolean empty;
+    public int seekTime;
 
     public GameTile(Context context, Coordinate coordinate) {
         super(context);

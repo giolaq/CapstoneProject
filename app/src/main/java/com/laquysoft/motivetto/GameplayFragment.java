@@ -27,14 +27,29 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.laquysoft.motivetto.common.MainThreadBus;
+import com.laquysoft.motivetto.components.DaggerEventBusComponent;
+import com.laquysoft.motivetto.components.EventBusComponent;
+import com.laquysoft.motivetto.events.TrackPausedEvent;
+import com.laquysoft.motivetto.events.TrackPlayingEvent;
+import com.laquysoft.motivetto.model.ParcelableSpotifyObject;
+import com.laquysoft.motivetto.modules.EventBusModule;
+import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.inject.Inject;
+
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.ArtistSimple;
+import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -46,33 +61,15 @@ import retrofit.client.Response;
  *
  * @author Bruno Oliveira (Google)
  */
-public class GameplayFragment extends Fragment implements OnClickListener,
-        MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
+public class GameplayFragment extends Fragment implements OnClickListener {
 
     private static final String LOG_TAG = GameplayFragment.class.getSimpleName();
     int mRequestedScore = 5000;
 
 
-    private MediaPlayer mMediaPlayer;
+    @Inject
+    MainThreadBus bus;
 
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.e(LOG_TAG, "Error during Playback!");
-        return false;    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        Log.d(LOG_TAG, "Track prepared");
-        mMediaPlayer.seekTo(0);
-        mMediaPlayer.start();
-    }
 
     public interface Listener {
         public void onEnteredScore(int score);
@@ -81,6 +78,8 @@ public class GameplayFragment extends Fragment implements OnClickListener,
     }
 
     Listener mListener = null;
+
+    private int trackseconds = 0;
 
 
     /**
@@ -199,6 +198,14 @@ public class GameplayFragment extends Fragment implements OnClickListener,
     };
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBusComponent component = DaggerEventBusComponent.builder().eventBusModule(new EventBusModule()).build();
+        bus = component.provideMainThreadBus();
+        bus.register(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gameplay, container, false);
@@ -231,7 +238,7 @@ public class GameplayFragment extends Fragment implements OnClickListener,
         parameters.put("offset", new Random().nextInt(5));
 
         StringBuilder builder = new StringBuilder();
-        for (String s : selectWords(4)) {
+        for (String s : selectWords(2)) {
             builder.append(s + " ");
         }
 
@@ -241,7 +248,37 @@ public class GameplayFragment extends Fragment implements OnClickListener,
                 if (tracksPager.tracks.items.size() > 0) {
                     String trackUrl = tracksPager.tracks.items.get(0).preview_url;
                     Log.d("Track success", trackUrl);
-                    playTrack(trackUrl);
+                    //playTrack(trackUrl);
+                }
+
+                if (tracksPager.tracks.items.size() <= 0) {
+                    Toast.makeText(getActivity(), "Track not found, please refine your search", Toast.LENGTH_LONG).show();
+                } else {
+                    String smallImageUrl = "";
+                    String bigImageUrl = "";
+                    for (Track track : tracksPager.tracks.items) {
+                        if (!track.album.images.isEmpty()) {
+                            smallImageUrl = track.album.images.get(0).url;
+                        }
+                        if (track.album.images.size() > 1) {
+                            bigImageUrl = track.album.images.get(1).url;
+                        }
+                        StringBuilder builder = new StringBuilder();
+                        for (ArtistSimple artist : track.artists) {
+                            if (builder.length() > 0) builder.append(", ");
+                            builder.append(artist.name);
+                        }
+                        ParcelableSpotifyObject parcelableSpotifyObject = new ParcelableSpotifyObject(track.name,
+                                track.album.name,
+                                builder.toString(),
+                                smallImageUrl,
+                                bigImageUrl,
+                                track.preview_url);
+                        ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
+                        tracks.add(parcelableSpotifyObject);
+                        MediaPlayerService.setTracks(getContext(), tracks);
+
+                    }
                 }
 
             }
@@ -278,19 +315,20 @@ public class GameplayFragment extends Fragment implements OnClickListener,
         return words;
     }
 
-    private void playTrack(String previewUrl) {
 
-        //Start Media Player
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnErrorListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
-        try {
-            mMediaPlayer.setDataSource(previewUrl);
-            mMediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Subscribe
+    public void getTrackPlaying(TrackPlayingEvent trackPlayingEvent) {
+        trackseconds++;
+        Log.d(LOG_TAG, "trackplay " + trackPlayingEvent.getProgress());
+        if ( trackseconds == 3 ) {
+            MediaPlayerService.pauseTrack(getContext());
         }
+
     }
+
+    @Subscribe
+    public void getTrackPaused(TrackPausedEvent trackPausedEvent) {
+        trackseconds = 0;
+    }
+
 }

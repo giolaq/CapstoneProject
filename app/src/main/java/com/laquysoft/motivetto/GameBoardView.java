@@ -14,7 +14,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -24,6 +28,7 @@ import android.widget.RelativeLayout;
  */
 public class GameBoardView extends RelativeLayout implements View.OnTouchListener {
 
+    private static final String LOG_TAG = GameBoardView.class.getSimpleName();
     protected Size tileSize;
     protected RectF gameboardRect;
     protected HashSet<GameTile> tiles;
@@ -32,6 +37,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     private PointF lastDragPoint;
     private TileServer tileServer;
     protected ArrayList<GameTileMotionDescriptor> currentMotionDescriptors;
+    private GameTile touchedTile;
 
     public GameBoardView(Context context, AttributeSet attrSet) {
         super(context, attrSet);
@@ -65,6 +71,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         params.leftMargin = tileRect.left;
         addView(tile, params);
         tile.setImageBitmap(tileServer.serveRandomSlice());
+        tile.seekTime = tileServer.serveRandomSeekTime();
     }
 
     protected void createTiles() {
@@ -80,21 +87,40 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         }
     }
 
+    final Handler handler = new Handler();
+    Runnable mLongPressed = new Runnable() {
+        public void run() {
+            Log.i("", "Long press!");
+            playTrackPiece();
+        }
+    };
+
+    private void playTrackPiece() {
+        MediaPlayerService.setTrackProgressTo(getContext(), touchedTile.seekTime);
+        Log.d(LOG_TAG, " seek track to " + (touchedTile.seekTime));
+        MediaPlayerService.playTrack(getContext(), 0);
+    }
+
     public boolean onTouch(View v, MotionEvent event) {
         try {
-            GameTile touchedTile = (GameTile)v;
+            touchedTile = (GameTile)v;
             if (touchedTile.isEmpty() || !touchedTile.isInRowOrColumnOf(emptyTile)) {
                 return false;
             } else {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    //handler.postDelayed(mLongPressed, 1000);
+                    playTrackPiece();
                     movedTile = touchedTile;
                     currentMotionDescriptors = getTilesBetweenEmptyTileAndTile(movedTile);
+
                 } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
+                    handler.removeCallbacks(mLongPressed);
                     if (lastDragPoint != null) {
                         moveDraggedTilesByMotionEventDelta(event);
                     }
                     lastDragPoint = new PointF(event.getRawX(), event.getRawY());
                 } else if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                    handler.removeCallbacks(mLongPressed);
                     // reload the motion descriptors in case of position change.
                     currentMotionDescriptors = getTilesBetweenEmptyTileAndTile(movedTile);
                     // if last move was a dragging move and the move was over half way to the empty tile
@@ -475,5 +501,14 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         }
 
     }
+
+    final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+        public void onLongPress(MotionEvent e) {
+            Log.e("", "Longpress detected");
+        }
+
+    });
+
+
 
 }
