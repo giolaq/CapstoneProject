@@ -320,8 +320,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void setTrackProgressTo(int progress) {
         if ( mMediaPlayer != null) {
-            if (mMediaPlayer.isPlaying())
+           // if (mMediaPlayer.isPlaying())
                 mMediaPlayer.seekTo(progress);
+            Log.d(LOG_TAG, "Seek to " + progress);
         }
     }
 

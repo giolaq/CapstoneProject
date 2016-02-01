@@ -50,20 +50,12 @@ public class TileServer {
 
     public Bitmap serveRandomSlice() {
         if (unservedSlices.size() > 0) {
-            //int randomIndex = random.nextInt(unservedSlices.size());
-            //Bitmap drawable = unservedSlices.remove(randomIndex);
-            return unservedSlices.get(0);
+            int randomIndex = random.nextInt(unservedSlices.size());
+            Bitmap drawable = unservedSlices.remove(randomIndex);
+            return drawable;
         }
         return null;
     }
 
-    public int serveRandomSeekTime() {
-        if (unservedSlices.size() > 0) {
-            int randomIndex = random.nextInt(unservedSlices.size());
-            Bitmap drawable = unservedSlices.remove(randomIndex);
-            return randomIndex;
-        }
-        return -1;
-    }
 
 }

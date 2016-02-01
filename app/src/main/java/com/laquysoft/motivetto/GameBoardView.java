@@ -1,8 +1,5 @@
 package com.laquysoft.motivetto;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.FloatEvaluator;
@@ -14,15 +11,17 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Random;
+
 /**
  * Created by joaobiriba on 28/01/16.
  */
@@ -42,7 +41,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     public GameBoardView(Context context, AttributeSet attrSet) {
         super(context, attrSet);
         Drawable img = getResources().getDrawable(R.drawable.android);
-        Bitmap original = ((BitmapDrawable)img).getBitmap();
+        Bitmap original = ((BitmapDrawable) img).getBitmap();
         tileServer = new TileServer(original, 4, 4, 68);
 
         createTiles();
@@ -64,6 +63,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         }
     }
 
+
     protected void placeTile(GameTile tile) {
         Rect tileRect = rectForCoordinate(tile.coordinate);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(tileSize.width, tileSize.height);
@@ -71,14 +71,45 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         params.leftMargin = tileRect.left;
         addView(tile, params);
         tile.setImageBitmap(tileServer.serveRandomSlice());
-        tile.seekTime = tileServer.serveRandomSeekTime();
+
+    }
+
+    private int[] randomNumbersArray() {
+        int maxNumber = 16;
+        int totalCount = 16;
+        Random random = new Random();
+
+        boolean[] generatedNumbers = new boolean[maxNumber];
+        int generatedCount = 0;
+
+        while (generatedCount < totalCount) {
+            int newNumber = random.nextInt(maxNumber);
+            if (generatedNumbers[newNumber] == false) {
+                generatedNumbers[newNumber] = true;
+                generatedCount++;
+            }
+        }
+
+        int[] sortedUniqueArray = new int[totalCount];
+
+        int selectedNumbers = 0;
+        for (int i = 0; i < generatedNumbers.length; i++) {
+            if (generatedNumbers[i] == true) {
+                sortedUniqueArray[selectedNumbers] = i;
+                selectedNumbers++;
+            }
+        }
+        return sortedUniqueArray;
     }
 
     protected void createTiles() {
         tiles = new HashSet<GameTile>();
-        for (int rowI=0; rowI<4; rowI++) {
-            for (int colI=0; colI<4; colI++) {
-                GameTile tile = createTileAtCoordinate( new Coordinate(rowI, colI) );
+        int[] randomSeekTime = randomNumbersArray();
+        for (int rowI = 0; rowI < 4; rowI++) {
+            for (int colI = 0; colI < 4; colI++) {
+                GameTile tile = createTileAtCoordinate(new Coordinate(rowI, colI));
+                tile.seekTime = randomSeekTime[rowI+colI];
+                Log.d(LOG_TAG, " seekTime: " + tile.seekTime);
                 if (rowI == 3 && colI == 3) {
                     emptyTile = tile;
                     tile.setEmpty(true);
@@ -87,40 +118,30 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         }
     }
 
-    final Handler handler = new Handler();
-    Runnable mLongPressed = new Runnable() {
-        public void run() {
-            Log.i("", "Long press!");
-            playTrackPiece();
-        }
-    };
 
     private void playTrackPiece() {
-        MediaPlayerService.setTrackProgressTo(getContext(), touchedTile.seekTime);
+        MediaPlayerService.setTrackProgressTo(getContext(), touchedTile.seekTime * 1000);
         Log.d(LOG_TAG, " seek track to " + (touchedTile.seekTime));
         MediaPlayerService.playTrack(getContext(), 0);
     }
 
     public boolean onTouch(View v, MotionEvent event) {
         try {
-            touchedTile = (GameTile)v;
+            touchedTile = (GameTile) v;
             if (touchedTile.isEmpty() || !touchedTile.isInRowOrColumnOf(emptyTile)) {
                 return false;
             } else {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    //handler.postDelayed(mLongPressed, 1000);
-                    playTrackPiece();
                     movedTile = touchedTile;
                     currentMotionDescriptors = getTilesBetweenEmptyTileAndTile(movedTile);
+                    playTrackPiece();
 
                 } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-                    handler.removeCallbacks(mLongPressed);
                     if (lastDragPoint != null) {
                         moveDraggedTilesByMotionEventDelta(event);
                     }
                     lastDragPoint = new PointF(event.getRawX(), event.getRawY());
                 } else if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    handler.removeCallbacks(mLongPressed);
                     // reload the motion descriptors in case of position change.
                     currentMotionDescriptors = getTilesBetweenEmptyTileAndTile(movedTile);
                     // if last move was a dragging move and the move was over half way to the empty tile
@@ -147,7 +168,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     protected boolean lastDragMovedAtLeastHalfWay() {
         if (currentMotionDescriptors != null && currentMotionDescriptors.size() > 0) {
             GameTileMotionDescriptor firstMotionDescriptor = currentMotionDescriptors.get(0);
-            if (firstMotionDescriptor.axialDelta > tileSize.width/2) {
+            if (firstMotionDescriptor.axialDelta > tileSize.width / 2) {
                 return true;
             }
         }
@@ -222,9 +243,14 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
             animator.setDuration(16);
             animator.addListener(new AnimatorListener() {
 
-                public void onAnimationStart(Animator animation) { }
-                public void onAnimationCancel(Animator animation) { }
-                public void onAnimationRepeat(Animator animation) { }
+                public void onAnimationStart(Animator animation) {
+                }
+
+                public void onAnimationCancel(Animator animation) {
+                }
+
+                public void onAnimationRepeat(Animator animation) {
+                }
 
                 public void onAnimationEnd(Animator animation) {
                     motionDescriptor.tile.coordinate = motionDescriptor.finalCoordinate;
@@ -249,9 +275,15 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
                 animator.setDuration(16);
                 animator.addListener(new AnimatorListener() {
 
-                    public void onAnimationStart(Animator animation) { }
-                    public void onAnimationCancel(Animator animation) { }
-                    public void onAnimationRepeat(Animator animation) { }
+                    public void onAnimationStart(Animator animation) {
+                    }
+
+                    public void onAnimationCancel(Animator animation) {
+                    }
+
+                    public void onAnimationRepeat(Animator animation) {
+                    }
+
                     public void onAnimationEnd(Animator animation) {
                     }
                 });
@@ -270,8 +302,8 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         if (tile.isToRightOf(emptyTile)) {
             for (int i = tile.coordinate.column; i > emptyTile.coordinate.column; i--) {
                 coordinate = new Coordinate(tile.coordinate.row, i);
-                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate) ;
-                finalCoordinate = new Coordinate(tile.coordinate.row, i-1);
+                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate);
+                finalCoordinate = new Coordinate(tile.coordinate.row, i - 1);
                 currentRect = rectForCoordinate(foundTile.coordinate);
                 finalRect = rectForCoordinate(finalCoordinate);
                 axialDelta = Math.abs(foundTile.getX() - currentRect.left);
@@ -289,8 +321,8 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         } else if (tile.isToLeftOf(emptyTile)) {
             for (int i = tile.coordinate.column; i < emptyTile.coordinate.column; i++) {
                 coordinate = new Coordinate(tile.coordinate.row, i);
-                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate) ;
-                finalCoordinate = new Coordinate(tile.coordinate.row, i+1);
+                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate);
+                finalCoordinate = new Coordinate(tile.coordinate.row, i + 1);
                 currentRect = rectForCoordinate(foundTile.coordinate);
                 finalRect = rectForCoordinate(finalCoordinate);
                 axialDelta = Math.abs(foundTile.getX() - currentRect.left);
@@ -308,8 +340,8 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         } else if (tile.isAbove(emptyTile)) {
             for (int i = tile.coordinate.row; i < emptyTile.coordinate.row; i++) {
                 coordinate = new Coordinate(i, tile.coordinate.column);
-                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate) ;
-                finalCoordinate = new Coordinate(i+1, tile.coordinate.column);
+                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate);
+                finalCoordinate = new Coordinate(i + 1, tile.coordinate.column);
                 currentRect = rectForCoordinate(foundTile.coordinate);
                 finalRect = rectForCoordinate(finalCoordinate);
                 axialDelta = Math.abs(foundTile.getY() - currentRect.top);
@@ -327,8 +359,8 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         } else if (tile.isBelow(emptyTile)) {
             for (int i = tile.coordinate.row; i > emptyTile.coordinate.row; i--) {
                 coordinate = new Coordinate(i, tile.coordinate.column);
-                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate) ;
-                finalCoordinate = new Coordinate(i-1, tile.coordinate.column);
+                foundTile = (tile.coordinate.matches(coordinate)) ? tile : getTileAtCoordinate(coordinate);
+                finalCoordinate = new Coordinate(i - 1, tile.coordinate.column);
                 currentRect = rectForCoordinate(foundTile.coordinate);
                 finalRect = rectForCoordinate(finalCoordinate);
                 axialDelta = Math.abs(foundTile.getY() - currentRect.top);
@@ -392,8 +424,8 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         tileSize = new Size(tileDimen, tileDimen);
         int gameboardWidth = tileSize.width * 4;
         int gameboardHeight = tileSize.height * 4;
-        int gameboardTop = viewHeight/2 - gameboardHeight/2;
-        int gameboardLeft = viewWidth/2 - gameboardWidth/2;
+        int gameboardTop = viewHeight / 2 - gameboardHeight / 2;
+        int gameboardLeft = viewWidth / 2 - gameboardWidth / 2;
         gameboardRect = new RectF(gameboardLeft, gameboardTop, gameboardLeft + gameboardWidth, gameboardTop + gameboardHeight);
         createTiles();
     }
@@ -508,7 +540,6 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         }
 
     });
-
 
 
 }
