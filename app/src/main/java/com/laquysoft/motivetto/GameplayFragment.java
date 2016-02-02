@@ -242,7 +242,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
             builder.append(s + " ");
         }
 
-        spotify.searchTracks(builder.toString(), parameters, new Callback<TracksPager>() {
+        spotify.searchTracks("Supercafone"/*builder.toString()*/, parameters, new Callback<TracksPager>() {
             @Override
             public void success(TracksPager tracksPager, Response response) {
                 if (tracksPager.tracks.items.size() > 0) {

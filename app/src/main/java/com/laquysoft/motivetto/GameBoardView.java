@@ -42,7 +42,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         super(context, attrSet);
         Drawable img = getResources().getDrawable(R.drawable.android);
         Bitmap original = ((BitmapDrawable) img).getBitmap();
-        tileServer = new TileServer(original, 4, 4, 68);
+        tileServer = new TileServer(original, 3, 3, 68);
 
         createTiles();
     }
@@ -70,47 +70,22 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         params.topMargin = tileRect.top;
         params.leftMargin = tileRect.left;
         addView(tile, params);
-        tile.setImageBitmap(tileServer.serveRandomSlice());
+
+        TileServer.TilePair tilePair = tileServer.serveRandomSlice();
+        tile.setImageBitmap(tilePair.bitmap());
+        tile.seekTime = tilePair.seekTime();
+
 
     }
 
-    private int[] randomNumbersArray() {
-        int maxNumber = 16;
-        int totalCount = 16;
-        Random random = new Random();
 
-        boolean[] generatedNumbers = new boolean[maxNumber];
-        int generatedCount = 0;
-
-        while (generatedCount < totalCount) {
-            int newNumber = random.nextInt(maxNumber);
-            if (generatedNumbers[newNumber] == false) {
-                generatedNumbers[newNumber] = true;
-                generatedCount++;
-            }
-        }
-
-        int[] sortedUniqueArray = new int[totalCount];
-
-        int selectedNumbers = 0;
-        for (int i = 0; i < generatedNumbers.length; i++) {
-            if (generatedNumbers[i] == true) {
-                sortedUniqueArray[selectedNumbers] = i;
-                selectedNumbers++;
-            }
-        }
-        return sortedUniqueArray;
-    }
 
     protected void createTiles() {
         tiles = new HashSet<GameTile>();
-        int[] randomSeekTime = randomNumbersArray();
-        for (int rowI = 0; rowI < 4; rowI++) {
-            for (int colI = 0; colI < 4; colI++) {
+        for (int rowI = 0; rowI < 3; rowI++) {
+            for (int colI = 0; colI < 3; colI++) {
                 GameTile tile = createTileAtCoordinate(new Coordinate(rowI, colI));
-                tile.seekTime = randomSeekTime[rowI+colI];
-                Log.d(LOG_TAG, " seekTime: " + tile.seekTime);
-                if (rowI == 3 && colI == 3) {
+                if (rowI == 2 && colI == 2) {
                     emptyTile = tile;
                     tile.setEmpty(true);
                 }
@@ -128,13 +103,15 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     public boolean onTouch(View v, MotionEvent event) {
         try {
             touchedTile = (GameTile) v;
+            if ( !touchedTile.isEmpty() && event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                playTrackPiece();
+            }
             if (touchedTile.isEmpty() || !touchedTile.isInRowOrColumnOf(emptyTile)) {
                 return false;
             } else {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                     movedTile = touchedTile;
                     currentMotionDescriptors = getTilesBetweenEmptyTileAndTile(movedTile);
-                    playTrackPiece();
 
                 } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
                     if (lastDragPoint != null) {
@@ -422,8 +399,8 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         int viewHeight = getHeight();
         int tileDimen = Math.round(getResources().getDimension(R.dimen.tile_size));
         tileSize = new Size(tileDimen, tileDimen);
-        int gameboardWidth = tileSize.width * 4;
-        int gameboardHeight = tileSize.height * 4;
+        int gameboardWidth = tileSize.width * 3;
+        int gameboardHeight = tileSize.height * 3;
         int gameboardTop = viewHeight / 2 - gameboardHeight / 2;
         int gameboardLeft = viewWidth / 2 - gameboardWidth / 2;
         gameboardRect = new RectF(gameboardLeft, gameboardTop, gameboardLeft + gameboardWidth, gameboardTop + gameboardHeight);
