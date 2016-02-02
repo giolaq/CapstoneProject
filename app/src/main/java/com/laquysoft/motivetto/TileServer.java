@@ -55,8 +55,8 @@ public class TileServer {
         int x, y;
         Bitmap bitmap;
         TilePair tilepair;
-        for (int colI=0; colI<3; colI++) {
-            for (int rowI=0; rowI<3; rowI++) {
+        for (int rowI=0; rowI<3; rowI++) {
+            for (int colI=0; colI<3; colI++) {
                 x = rowI * tileSize;
                 y = colI * tileSize;
                 bitmap = Bitmap.createBitmap(scaledImage, x, y, tileSize, tileSize);
