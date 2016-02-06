@@ -59,7 +59,7 @@ public class TileServer {
             for (int colI=0; colI<3; colI++) {
                 x = rowI * tileSize;
                 y = colI * tileSize;
-                bitmap = Bitmap.createBitmap(scaledImage, x, y, tileSize, tileSize);
+                bitmap = Bitmap.createBitmap(scaledImage, y, x, tileSize, tileSize);
                 int seekTime = slices.size() * 3;
                 Log.d(LOG_TAG, "sliceOriginal: " + seekTime);
                 tilepair = new TilePair(bitmap,seekTime);
