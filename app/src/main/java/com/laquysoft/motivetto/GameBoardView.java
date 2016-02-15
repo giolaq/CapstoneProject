@@ -17,10 +17,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
 
 /**
  * Created by joaobiriba on 28/01/16.
@@ -79,7 +79,6 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     }
 
 
-
     protected void createTiles() {
         tiles = new HashSet<GameTile>();
         for (int rowI = 0; rowI < 3; rowI++) {
@@ -103,7 +102,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     public boolean onTouch(View v, MotionEvent event) {
         try {
             touchedTile = (GameTile) v;
-            if ( !touchedTile.isEmpty() && event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            if (!touchedTile.isEmpty() && event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 playTrackPiece();
             }
             if (touchedTile.isEmpty() || !touchedTile.isInRowOrColumnOf(emptyTile)) {
@@ -125,8 +124,10 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
                     if (lastDragPoint != null && lastDragMovedAtLeastHalfWay()) {
                         animateCurrentMovedTilesToEmptySpace();
                         // otherwise, if it wasn't a drag, do the move
+                        checkWin();
                     } else if (lastDragPoint == null) {
                         animateCurrentMovedTilesToEmptySpace();
+                        checkWin();
                         // Animate tiles back to origin
                     } else {
                         animateMovedTilesBackToOrigin();
@@ -427,6 +428,48 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
 
     }
 
+    private boolean checkWin() {
+
+        GameTile tile3 = getTileAtCoordinate(new Coordinate(0, 2));
+        GameTile tile4 = getTileAtCoordinate(new Coordinate(1, 0));
+        if (tile3 != null && tile4 != null) {
+            if (tile4.seekTime !=  tile3.seekTime + 3)
+                return false;
+        } else {
+            Log.d(LOG_TAG, "checkWin: empty tile");
+        }
+
+        GameTile tile5 = getTileAtCoordinate(new Coordinate(1, 2));
+        GameTile tile6 = getTileAtCoordinate(new Coordinate(2, 0));
+        if (tile5 != null && tile6 != null) {
+            if (tile6.seekTime != tile5.seekTime + 3)
+                return false;
+        } else {
+            Log.d(LOG_TAG, "checkWin: empty tile");
+        }
+        for (int rowI = 0; rowI < 3; rowI++) {
+            GameTile tile1 = getTileAtCoordinate(new Coordinate(rowI, 0));
+            GameTile tile2 = getTileAtCoordinate(new Coordinate(rowI, 1));
+
+            if (tile1 != null && tile2 != null) {
+                if (tile2.seekTime != tile1.seekTime +3)
+                    return false;
+            } else {
+                Log.d(LOG_TAG, "checkWin: empty tile");
+            }
+
+        }
+
+        Log.d(LOG_TAG, "checkWin: WIN");
+        Toast.makeText(getContext(), "WIN", Toast.LENGTH_LONG).show();
+        playWin();
+        return true;
+    }
+
+    private void playWin() {
+        MediaPlayerService.setTrackProgressTo(getContext(), 0);
+        MediaPlayerService.playTrackWin(getContext(), 0);
+    }
     public class Coordinate {
 
         public int row;

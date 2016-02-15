@@ -47,6 +47,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     //Available Actions
     public static final String ACTION_PLAY_TRACK = "action_play_track";
+    public static final String ACTION_PLAY_TRACK_ALL = "action_play_track_all";
     public static final String ACTION_PAUSE_TRACK = "action_pause_track";
     public static final String ACTION_RESUME_TRACK = "action_resume_track";
     public static final String ACTION_PLAY_PREVIOUS_TRACK = "action_previous_track";
@@ -97,6 +98,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         Log.d(LOG_TAG, "play!");
         Intent serviceIntent = new Intent(context, MediaPlayerService.class);
         serviceIntent.setAction(ACTION_PLAY_TRACK);
+        serviceIntent.putExtra(TRACK_ID, trackId);
+        context.startService(serviceIntent);
+    }
+
+    public static void playTrackWin(Context context, int trackId) {
+        Log.d(LOG_TAG, "play!");
+        Intent serviceIntent = new Intent(context, MediaPlayerService.class);
+        serviceIntent.setAction(ACTION_PLAY_TRACK_ALL);
         serviceIntent.putExtra(TRACK_ID, trackId);
         context.startService(serviceIntent);
     }
@@ -196,6 +205,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             playTrack(trackId);
         }
 
+        //Play track
+        if (intent.getAction().equals(ACTION_PLAY_TRACK_ALL)) {
+            int trackId = intent.getIntExtra(TRACK_ID, -1);
+            playTrackWin();
+        }
+
         //Pause track
         if (intent.getAction().equals(ACTION_PAUSE_TRACK)) {
             pauseTrack();
@@ -292,6 +307,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void playTrack(int trackId) {
         resumeTrack();
+    }
+
+    private void playTrackWin() {
+        Log.d(LOG_TAG, "resume Track");
+        if (mMediaPlayer == null)
+            return;
+
+        mMediaPlayer.start();
     }
 
     private void pauseTrack() {
