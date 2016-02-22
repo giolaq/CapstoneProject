@@ -15,6 +15,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
@@ -67,11 +68,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     ParcelableSpotifyObject mCurrentTrack;
     int mCurrentTrackIndex;
     MediaPlayer mMediaPlayer;
-    BroadcastTrackProgressTask mBroadcastTrackProgressTask;
+
     ArrayList<ParcelableSpotifyObject> mTracksList;
 
     @Inject
     MainThreadBus bus;
+    private CountDownTimer timer;
 
     /**
      * Constructor
@@ -191,6 +193,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         if (intent.getAction().equals(ACTION_SET_TRACKS)) {
             setTracks(intent);
             loadTrack(0);
+            timer = new CountDownTimer(3000, 1000) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    // Nothing to do
+                    Log.d(LOG_TAG, "tick " + millisUntilFinished);
+                }
+
+                @Override
+                public void onFinish() {
+                    if (mMediaPlayer.isPlaying()) {
+                        mMediaPlayer.pause();
+                        //mMediaPlayer.release();
+                    }
+                }
+            };
         }
 
         //Previous track
@@ -276,8 +294,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mMediaPlayer.release();
         mMediaPlayer = null;
 
-        if (mBroadcastTrackProgressTask != null)
-            mBroadcastTrackProgressTask.cancel(true);
     }
 
 
@@ -306,6 +322,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void playTrack(int trackId) {
+        timer.start();
         resumeTrack();
     }
 
@@ -321,11 +338,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         if (mMediaPlayer == null)
             return;
 
-        broadcastTrackPause();
         mMediaPlayer.pause();
+        timer.cancel();
 
-        if (mBroadcastTrackProgressTask != null)
-            mBroadcastTrackProgressTask.cancel(true);
 
     }
 
@@ -334,10 +349,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         if (mMediaPlayer == null)
             return;
 
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+        }
         mMediaPlayer.start();
 
-        mBroadcastTrackProgressTask = new BroadcastTrackProgressTask();
-        mBroadcastTrackProgressTask.execute();
 
     }
 
@@ -366,51 +382,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
 
-    /**
-     * BroadcastTrackProgressTask: reports song that is being played and progress
-     */
-    class BroadcastTrackProgressTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            while (!isCancelled()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                if (!mMediaPlayer.isPlaying())
-                    return null;
-
-                broadcastTrackPlayingProgress();
-            }
-
-            return null;
-        }
-    }
-
-    private void broadcastTrackPlayingProgress() {
-        Log.d(LOG_TAG, "broadcastTrackPlayingProgress: ");
-        TrackPlayingEvent event = TrackPlayingEvent.newInstance(
-                mCurrentTrack,
-                mMediaPlayer.getCurrentPosition()
-        );
-        bus.post(event);
-    }
-
-    private void broadcastTrackPause() {
-        TrackPausedEvent event = TrackPausedEvent.newInstance(
-                mCurrentTrack,
-                mMediaPlayer.getCurrentPosition()
-        );
-        bus.post(event);
-    }
-
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        broadcastTrackPlayingProgress();
         //resumeTrack();
     }
 
