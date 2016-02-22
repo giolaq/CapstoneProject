@@ -8,6 +8,11 @@ import java.util.HashSet;
 import java.util.Random;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.util.Log;
 
 public class TileServer {
@@ -61,6 +66,20 @@ public class TileServer {
                 y = colI * tileSize;
                 bitmap = Bitmap.createBitmap(scaledImage, y, x, tileSize, tileSize);
                 int seekTime = slices.size() * 3;
+
+                //Debug Write seekTime on bitmap
+                Canvas canvas = new Canvas(bitmap);
+
+                Paint paint = new Paint();
+                paint.setColor(Color.RED); // Text Color
+                paint.setStrokeWidth(12); // Text Size
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)); // Text Overlapping Pattern
+                // some more settings...
+
+                canvas.drawBitmap(bitmap, 0, 0, paint);
+                canvas.drawText(Integer.toString(seekTime), 10, 10, paint);
+                //End debug
+
                 Log.d(LOG_TAG, "sliceOriginal: " + seekTime);
                 tilepair = new TilePair(bitmap,seekTime);
                 slices.add(tilepair);
