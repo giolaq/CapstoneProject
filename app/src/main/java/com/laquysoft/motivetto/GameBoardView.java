@@ -60,6 +60,10 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     protected void placeTiles() {
         for (GameTile tile : tiles) {
             placeTile(tile);
+            if (tile.seekTime == 24) {
+                emptyTile = tile;
+                tile.setEmpty(true);
+            }
         }
     }
 
@@ -84,10 +88,6 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         for (int rowI = 0; rowI < 3; rowI++) {
             for (int colI = 0; colI < 3; colI++) {
                 GameTile tile = createTileAtCoordinate(new Coordinate(rowI, colI));
-                if (rowI == 2 && colI == 2) {
-                    emptyTile = tile;
-                    tile.setEmpty(true);
-                }
             }
         }
     }
