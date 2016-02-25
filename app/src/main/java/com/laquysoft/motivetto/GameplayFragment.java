@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -69,6 +71,11 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
     @Inject
     MainThreadBus bus;
+
+
+    public int seconds = 0;
+    public int minutes = 0;
+
 
 
     public interface Listener {
@@ -221,6 +228,41 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         super.onStart();
         updateUi();
         retrieveSpotifyRandomSongs();
+        startTimer();
+    }
+
+    public void startTimer() {
+        //Declare the timer
+        Timer t = new Timer();
+        //Set the schedule function and rate
+        t.scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        TextView tv = (TextView) getActivity().findViewById(R.id.timer);
+                        tv.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
+                        seconds += 1;
+
+                        if (seconds == 60) {
+                            tv.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
+
+                            seconds = 0;
+                            minutes = minutes + 1;
+
+                        }
+
+
+
+                    }
+
+                });
+            }
+
+        }, 0, 1000);
     }
 
     private void retrieveSpotifyRandomSongs() {
@@ -242,7 +284,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
             builder.append(s + " ");
         }
 
-        spotify.searchTracks("Supercafone"/*builder.toString()*/, parameters, new Callback<TracksPager>() {
+        spotify.searchTracks(builder.toString(), parameters, new Callback<TracksPager>() {
             @Override
             public void success(TracksPager tracksPager, Response response) {
                 if (tracksPager.tracks.items.size() > 0) {
