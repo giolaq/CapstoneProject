@@ -4,31 +4,20 @@ package com.laquysoft.motivetto;
  * Created by joaobiriba on 30/01/16.
  */
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.RemoteViews;
 
 import com.laquysoft.motivetto.common.MainThreadBus;
 import com.laquysoft.motivetto.components.DaggerEventBusComponent;
 import com.laquysoft.motivetto.components.EventBusComponent;
 import com.laquysoft.motivetto.events.TrackLoadedEvent;
-import com.laquysoft.motivetto.events.TrackPausedEvent;
-import com.laquysoft.motivetto.events.TrackPlayingEvent;
 import com.laquysoft.motivetto.model.ParcelableSpotifyObject;
 import com.laquysoft.motivetto.modules.EventBusModule;
 
@@ -74,6 +63,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     @Inject
     MainThreadBus bus;
     private CountDownTimer timer;
+    private boolean prepared = false;
 
     /**
      * Constructor
@@ -322,16 +312,20 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void playTrack(int trackId) {
-        timer.start();
-        resumeTrack();
+        if (prepared) {
+            timer.start();
+            resumeTrack();
+        }
     }
 
     private void playTrackWin() {
+        timer.cancel();
         Log.d(LOG_TAG, "resume Track");
         if (mMediaPlayer == null)
             return;
 
         mMediaPlayer.start();
+        prepared = false;
     }
 
     private void pauseTrack() {
@@ -358,9 +352,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void setTrackProgressTo(int progress) {
-        if ( mMediaPlayer != null) {
-           // if (mMediaPlayer.isPlaying())
-                mMediaPlayer.seekTo(progress);
+        if (mMediaPlayer != null) {
+            // if (mMediaPlayer.isPlaying())
+            mMediaPlayer.seekTo(progress);
             Log.d(LOG_TAG, "Seek to " + progress);
         }
     }
@@ -375,17 +369,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
 
-
     @Override
     public void onCompletion(MediaPlayer mp) {
 
     }
 
 
-
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         //resumeTrack();
+        prepared = true;
     }
 
     @Override

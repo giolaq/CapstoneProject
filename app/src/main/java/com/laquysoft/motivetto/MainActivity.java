@@ -196,6 +196,8 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onEnteredScore(int requestedScore) {
+
+        requestedScore = mGameplayFragment.stopTimer();
         // Compute final score (in easy mode, it's the requested score; in hard mode, it's half)
         int finalScore = mHardMode ? requestedScore / 2 : requestedScore;
 

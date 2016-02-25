@@ -467,8 +467,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     }
 
     private void playWin() {
-        MediaPlayerService.setTrackProgressTo(getContext(), 0);
-        MediaPlayerService.playTrackWin(getContext(), 0);
+        ((MainActivity)this.getContext()).onEnteredScore(499);
     }
     public class Coordinate {
 

@@ -75,7 +75,8 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
     public int seconds = 0;
     public int minutes = 0;
-
+    private Timer t;
+    private boolean isRegistered = false;
 
 
     public interface Listener {
@@ -209,7 +210,10 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         super.onCreate(savedInstanceState);
         EventBusComponent component = DaggerEventBusComponent.builder().eventBusModule(new EventBusModule()).build();
         bus = component.provideMainThreadBus();
-        bus.register(this);
+        if ( !isRegistered ) {
+            bus.register(this);
+            isRegistered = true;
+        }
     }
 
     @Override
@@ -232,8 +236,10 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     }
 
     public void startTimer() {
+        minutes=0;
+        seconds=0;
         //Declare the timer
-        Timer t = new Timer();
+        t = new Timer();
         //Set the schedule function and rate
         t.scheduleAtFixedRate(new TimerTask() {
 
@@ -256,7 +262,6 @@ public class GameplayFragment extends Fragment implements OnClickListener {
                         }
 
 
-
                     }
 
                 });
@@ -265,6 +270,14 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         }, 0, 1000);
     }
 
+
+    public int stopTimer() {
+        t.cancel();
+        int points = 600 - (minutes * 60 + seconds);
+        MediaPlayerService.setTrackProgressTo(getActivity(), 0);
+        MediaPlayerService.playTrackWin(getActivity(),0);
+        return points;
+    }
     private void retrieveSpotifyRandomSongs() {
         SpotifyApi api = new SpotifyApi();
 
@@ -331,6 +344,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
             }
         });
     }
+
 
     void updateUi() {
         if (getActivity() == null) return;
