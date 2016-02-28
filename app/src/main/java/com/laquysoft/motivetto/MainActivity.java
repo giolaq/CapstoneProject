@@ -223,6 +223,11 @@ public class MainActivity extends FragmentActivity
         return token;
     }
 
+    @Override
+    public void onIncrementMoves(int moves) {
+        mGameplayFragment.incrementMovesNumber(moves);
+    }
+
     // Checks if n is prime. We don't consider 0 and 1 to be prime.
     // This is not an implementation we are mathematically proud of, but it gets the job done.
     boolean isPrime(int n) {

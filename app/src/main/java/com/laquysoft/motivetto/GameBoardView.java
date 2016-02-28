@@ -37,6 +37,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     private TileServer tileServer;
     protected ArrayList<GameTileMotionDescriptor> currentMotionDescriptors;
     private GameTile touchedTile;
+    private int movesNumber = 0;
 
     public GameBoardView(Context context, AttributeSet attrSet) {
         super(context, attrSet);
@@ -123,6 +124,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
                     // if last move was a dragging move and the move was over half way to the empty tile
                     if (lastDragPoint != null && lastDragMovedAtLeastHalfWay()) {
                         animateCurrentMovedTilesToEmptySpace();
+                        incrementMovesNumber();
                         // otherwise, if it wasn't a drag, do the move
                         checkWin();
                     } else if (lastDragPoint == null) {
@@ -141,6 +143,11 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         } catch (ClassCastException e) {
             return false;
         }
+    }
+
+    private void incrementMovesNumber() {
+        movesNumber = movesNumber + 1;
+        ((MainActivity)this.getContext()).onIncrementMoves(movesNumber);
     }
 
     protected boolean lastDragMovedAtLeastHalfWay() {
@@ -468,6 +475,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
 
     private void playWin() {
         ((MainActivity)this.getContext()).onEnteredScore(499);
+        movesNumber = 0;
     }
     public class Coordinate {
 

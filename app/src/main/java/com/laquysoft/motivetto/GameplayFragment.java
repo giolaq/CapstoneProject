@@ -78,11 +78,18 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     private Timer t;
     private boolean isRegistered = false;
 
+    public void incrementMovesNumber(int moves) {
+        TextView movesNumber = ((TextView) getView().findViewById(R.id.moves_number));
+        movesNumber.setText(Integer.toString(moves));
+    }
+
 
     public interface Listener {
         public void onEnteredScore(int score);
 
         public String onAccessToken();
+
+        public void onIncrementMoves(int moves);
     }
 
     Listener mListener = null;
