@@ -24,13 +24,20 @@
     android:padding="20dp">
 
     <TextView
-        android:id="@+id/score_input"
+        android:id="@+id/track_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/initial_input"
+        android:textStyle="bold"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/track_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
         android:text="@string/initial_input"
-        android:textSize="40sp" />
-
+        android:textSize="20sp" />
 
     <com.laquysoft.motivetto.GameBoardView
         android:id="@+id/gameboard"

@@ -323,6 +323,18 @@ public class GameplayFragment extends Fragment implements OnClickListener {
                             if (builder.length() > 0) builder.append(", ");
                             builder.append(artist.name);
                         }
+
+                        TextView trackName = ((TextView) getActivity().findViewById(R.id.track_name));
+                        TextView trackArtistName = ((TextView) getActivity().findViewById(R.id.track_artist));
+
+                        trackName.setText(track.name);
+
+                        StringBuilder sb = new StringBuilder();
+                        for ( ArtistSimple artist : track.artists) {
+                            sb.append(artist.name + " ");
+                        }
+                        trackArtistName.setText(sb.toString());
+
                         ParcelableSpotifyObject parcelableSpotifyObject = new ParcelableSpotifyObject(track.name,
                                 track.album.name,
                                 builder.toString(),
@@ -348,8 +360,6 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
     void updateUi() {
         if (getActivity() == null) return;
-        TextView scoreInput = ((TextView) getActivity().findViewById(R.id.score_input));
-        if (scoreInput != null) scoreInput.setText(String.format("%04d", mRequestedScore));
     }
 
     @Override
