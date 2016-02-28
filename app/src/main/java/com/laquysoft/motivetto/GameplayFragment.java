@@ -235,6 +235,13 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         startTimer();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        t.cancel();
+        t.purge();
+    }
+
     public void startTimer() {
         minutes=0;
         seconds=0;
