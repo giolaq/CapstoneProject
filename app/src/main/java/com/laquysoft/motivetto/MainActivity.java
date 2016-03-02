@@ -16,8 +16,11 @@
 
 package com.laquysoft.motivetto;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -30,6 +33,7 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
+import com.laquysoft.motivetto.data.StatsContract;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -37,12 +41,12 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 /**
  * Our main activity for the game.
- *
+ * <p/>
  * IMPORTANT: Before attempting to run this sample, please change
  * the package name to your own package name (not com.android.*) and
  * replace the IDs on res/values/ids.xml by your own IDs (you must
  * create a game in the developer console to get those IDs).
- *
+ * <p/>
  * This is a very simple game where the user selects "easy mode" or
  * "hard mode" and then the "gameplay" consists of inputting the
  * desired score (0 to 9999). In easy mode, you get the score you
@@ -195,12 +199,18 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void onEnteredScore(int requestedScore) {
+    public void onEnteredScore() {
 
-        requestedScore = mGameplayFragment.stopTimer();
+        int requestedScore = mGameplayFragment.stopTimer();
+        String trackName = mGameplayFragment.getTrackName();
+        String trackArtist = mGameplayFragment.getTrackArtist();
+        int solvedTime = mGameplayFragment.getSolvedTime();
+        int solvedMoves = mGameplayFragment.getSolvedMoves();
+
         // Compute final score (in easy mode, it's the requested score; in hard mode, it's half)
         int finalScore = mHardMode ? requestedScore / 2 : requestedScore;
 
+        addStat(trackName, trackArtist, solvedTime, solvedMoves);
         mWinFragment.setFinalScore(finalScore);
         mWinFragment.setExplanation(mHardMode ? getString(R.string.hard_mode_explanation) :
                 getString(R.string.easy_mode_explanation));
@@ -216,6 +226,41 @@ public class MainActivity extends FragmentActivity
 
         // switch to the exciting "you won" screen
         switchToFragment(mWinFragment);
+    }
+
+
+
+    /**
+     * Helper method to handle insertion of a new stat in the stats database.
+     */
+    long addStat(String trackName, String trackArtist, int solvedTime, int solvedMoves) {
+        long statId;
+
+
+        // Now that the content provider is set up, inserting rows of data is pretty simple.
+        // First create a ContentValues object to hold the data you want to insert.
+        ContentValues locationValues = new ContentValues();
+
+        // Then add the data, along with the corresponding name of the data type,
+        // so the content provider knows what kind of value is being inserted.
+        locationValues.put(StatsContract.StatsEntry.COLUMN_PLAYER_NAME, Games.Players.getCurrentPlayer(mGoogleApiClient).getDisplayName());
+        locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_NAME, trackName);
+        locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_ARTIST, trackArtist);
+        locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME, solvedTime);
+        locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES, solvedMoves);
+
+        // Finally, insert stat data into the database.
+        Uri insertedUri = getContentResolver().insert(
+                StatsContract.StatsEntry.CONTENT_URI,
+                locationValues
+        );
+
+        // The resulting URI contains the ID for the row.  Extract the statId from the Uri.
+        statId = ContentUris.parseId(insertedUri);
+
+
+        // Wait, that worked?  Yes!
+        return statId;
     }
 
     @Override
@@ -245,7 +290,7 @@ public class MainActivity extends FragmentActivity
      * Check for achievements and unlock the appropriate ones.
      *
      * @param requestedScore the score the user requested.
-     * @param finalScore the score the user got.
+     * @param finalScore     the score the user got.
      */
     void checkForAchievements(int requestedScore, int finalScore) {
         // Check if each condition is met; if so, unlock the corresponding
@@ -452,7 +497,7 @@ public class MainActivity extends FragmentActivity
         // Check to see the developer who's running this sample code read the instructions :-)
         // NOTE: this check is here only because this is a sample! Don't include this
         // check in your actual production app.
-        if(!BaseGameUtils.verifySampleSetup(this, R.string.app_id,
+        if (!BaseGameUtils.verifySampleSetup(this, R.string.app_id,
                 R.string.achievement_prime, R.string.leaderboard_easy)) {
             Log.w(TAG, "*** Warning: setup problems detected. Sign in may not work!");
         }

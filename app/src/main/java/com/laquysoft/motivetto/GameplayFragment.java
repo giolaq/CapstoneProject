@@ -77,15 +77,36 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     public int minutes = 0;
     private Timer t;
     private boolean isRegistered = false;
+    private String trackName;
+    private String trackArtistName;
+    private int solvedTime;
+    private int solvedMoves;
 
     public void incrementMovesNumber(int moves) {
+        solvedMoves = moves;
         TextView movesNumber = ((TextView) getView().findViewById(R.id.moves_number));
         movesNumber.setText(Integer.toString(moves));
     }
 
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public String getTrackArtist() {
+        return trackArtistName;
+    }
+
+    public int getSolvedTime() {
+        return solvedTime;
+    }
+
+    public int getSolvedMoves() {
+        return solvedMoves;
+    }
+
 
     public interface Listener {
-        public void onEnteredScore(int score);
+        public void onEnteredScore();
 
         public String onAccessToken();
 
@@ -287,6 +308,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
     public int stopTimer() {
         t.cancel();
+        solvedTime = minutes * 60 + seconds;
         int points = 600 - (minutes * 60 + seconds);
         MediaPlayerService.setTrackProgressTo(getActivity(), 0);
         MediaPlayerService.playTrackWin(getActivity(),0);
@@ -338,16 +360,20 @@ public class GameplayFragment extends Fragment implements OnClickListener {
                             builder.append(artist.name);
                         }
 
-                        TextView trackName = ((TextView) getActivity().findViewById(R.id.track_name));
-                        TextView trackArtistName = ((TextView) getActivity().findViewById(R.id.track_artist));
+                        TextView trackNameTv = ((TextView) getActivity().findViewById(R.id.track_name));
+                        TextView trackArtistNameTv = ((TextView) getActivity().findViewById(R.id.track_artist));
 
-                        trackName.setText(track.name);
+                        trackName = track.name;
+                        trackNameTv.setText(trackName);
+                        
 
                         StringBuilder sb = new StringBuilder();
                         for ( ArtistSimple artist : track.artists) {
                             sb.append(artist.name + " ");
                         }
-                        trackArtistName.setText(sb.toString());
+                        
+                        trackArtistName = sb.toString();
+                        trackArtistNameTv.setText(trackArtistName);
 
                         ParcelableSpotifyObject parcelableSpotifyObject = new ParcelableSpotifyObject(track.name,
                                 track.album.name,

@@ -13,6 +13,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="content_authority">com.laquysoft.motivetto.app</string>
 
     <string name="signing_in">Signing in with Google</string>
     <string name="signing_out">Signing out</string>

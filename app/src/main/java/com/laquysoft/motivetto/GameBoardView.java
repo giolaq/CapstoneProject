@@ -474,7 +474,7 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     }
 
     private void playWin() {
-        ((MainActivity)this.getContext()).onEnteredScore(499);
+        ((MainActivity)this.getContext()).onEnteredScore();
         movesNumber = 0;
     }
     public class Coordinate {
