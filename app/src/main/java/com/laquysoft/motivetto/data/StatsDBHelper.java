@@ -32,7 +32,7 @@ public class StatsDBHelper extends SQLiteOpenHelper {
                 StatsContract.StatsEntry.COLUMN_TRACK_NAME + " TEXT NOT NULL, " +
                 StatsContract.StatsEntry.COLUMN_TRACK_ARTIST + " TEXT NOT NULL, " +
                 StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME + " INTEGER NOT NULL, " +
-                StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES + " INTEGER NOT NULL, " +
+                StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES + " INTEGER NOT NULL " +
                 " );";
 
 

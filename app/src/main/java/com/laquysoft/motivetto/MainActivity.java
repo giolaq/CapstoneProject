@@ -20,6 +20,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -59,6 +60,7 @@ public class MainActivity extends FragmentActivity
         GameplayFragment.Listener, WinFragment.Listener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    public final static String LOG_TAG = MainActivity.class.getSimpleName();
     // Fragments
     MainMenuFragment mMainMenuFragment;
     GameplayFragment mGameplayFragment;
@@ -227,7 +229,6 @@ public class MainActivity extends FragmentActivity
         // switch to the exciting "you won" screen
         switchToFragment(mWinFragment);
     }
-
 
 
     /**
@@ -520,6 +521,27 @@ public class MainActivity extends FragmentActivity
         mWinFragment.setShowSignInButton(true);
     }
 
+    @Override
+    public void onShowStatsButtonClicked() {
+        String[] projection = {StatsContract.StatsEntry.COLUMN_TRACK_NAME, StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME};
+        Cursor cursor = getContentResolver().query(
+                StatsContract.StatsEntry.CONTENT_URI, projection, null,
+                null, null);
+        if (null != cursor) {
+            try {
+                while (cursor.moveToNext()) {
+                    String trackName = cursor.getString(cursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_NAME));
+                    int solvedTime = cursor.getInt(cursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME));
+                    Log.d(LOG_TAG, "stat " + trackName + " " + solvedTime);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+
+    }
+
     class AccomplishmentsOutbox {
         boolean mPrimeAchievement = false;
         boolean mHumbleAchievement = false;
@@ -546,6 +568,7 @@ public class MainActivity extends FragmentActivity
             /* TODO: This is left as an exercise. Write code here that loads data
              * from the file you wrote in saveLocal(). */
         }
+
     }
 
     @Override

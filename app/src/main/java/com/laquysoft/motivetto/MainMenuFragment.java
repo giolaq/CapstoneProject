@@ -29,17 +29,22 @@ import android.widget.TextView;
  * show view achievements/leaderboards.
  *
  * @author Bruno Oliveira (Google)
- *
  */
 public class MainMenuFragment extends Fragment implements OnClickListener {
     String mGreeting = "Hello, anonymous user (not signed in)";
 
     public interface Listener {
         public void onStartGameRequested(boolean hardMode);
+
         public void onShowAchievementsRequested();
+
         public void onShowLeaderboardsRequested();
+
         public void onSignInButtonClicked();
+
         public void onSignOutButtonClicked();
+
+        public void onShowStatsButtonClicked();
     }
 
     Listener mListener = null;
@@ -47,11 +52,12 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_mainmenu, container, false);
-        final int[] CLICKABLES = new int[] {
+        final int[] CLICKABLES = new int[]{
                 R.id.easy_mode_button,
                 R.id.show_achievements_button, R.id.show_leaderboards_button,
+                R.id.show_stats_button,
                 R.id.sign_in_button, R.id.sign_out_button
         };
         for (int i : CLICKABLES) {
@@ -89,21 +95,24 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-        case R.id.easy_mode_button:
-            mListener.onStartGameRequested(false);
-            break;
-        case R.id.show_achievements_button:
-            mListener.onShowAchievementsRequested();
-            break;
-        case R.id.show_leaderboards_button:
-            mListener.onShowLeaderboardsRequested();
-            break;
-        case R.id.sign_in_button:
-            mListener.onSignInButtonClicked();
-            break;
-        case R.id.sign_out_button:
-            mListener.onSignOutButtonClicked();
-            break;
+            case R.id.easy_mode_button:
+                mListener.onStartGameRequested(false);
+                break;
+            case R.id.show_achievements_button:
+                mListener.onShowAchievementsRequested();
+                break;
+            case R.id.show_leaderboards_button:
+                mListener.onShowLeaderboardsRequested();
+                break;
+            case R.id.sign_in_button:
+                mListener.onSignInButtonClicked();
+                break;
+            case R.id.sign_out_button:
+                mListener.onSignOutButtonClicked();
+                break;
+            case R.id.show_stats_button:
+                mListener.onShowStatsButtonClicked();
+                break;
         }
     }
 

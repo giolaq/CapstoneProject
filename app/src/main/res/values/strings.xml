@@ -51,6 +51,7 @@
     <string name="see_your_progress">See your progress:</string>
     <string name="show_achievements">Show Achievements</string>
     <string name="show_leaderboards">Show Leaderboards</string>
+    <string name="show_stats">Show Statistics</string>
     <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
     <string name="you_are_signed_in">You are signed in with Google.</string>
     <string name="sign_out">Sign out</string>
