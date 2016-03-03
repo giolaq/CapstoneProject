@@ -65,6 +65,7 @@ public class MainActivity extends FragmentActivity
     MainMenuFragment mMainMenuFragment;
     GameplayFragment mGameplayFragment;
     WinFragment mWinFragment;
+    StatsFragment mStatsFragment;
 
     // Client used to interact with Google APIs
     private GoogleApiClient mGoogleApiClient;
@@ -118,6 +119,7 @@ public class MainActivity extends FragmentActivity
         mMainMenuFragment = new MainMenuFragment();
         mGameplayFragment = new GameplayFragment();
         mWinFragment = new WinFragment();
+        mStatsFragment = new StatsFragment();
 
         // listen to fragment events
         mMainMenuFragment.setListener(this);
