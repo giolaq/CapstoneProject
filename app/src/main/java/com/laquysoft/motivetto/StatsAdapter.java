@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.laquysoft.motivetto.data.StatsContract;
+
 /**
  * Created by joaobiriba on 03/03/16.
  */
@@ -65,8 +67,7 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsAdapter
     @Override
     public StatsAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         if ( viewGroup instanceof RecyclerView ) {
-            int layoutId = -1;
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(layoutId, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_stats, viewGroup, false);
             view.setFocusable(true);
             return new StatsAdapterViewHolder(view);
         } else {
@@ -77,6 +78,11 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsAdapter
     @Override
     public void onBindViewHolder(StatsAdapterViewHolder forecastAdapterViewHolder, int position) {
         mCursor.moveToPosition(position);
+        String trackName = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_NAME));
+        String trackSolvedTime = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME));
+
+        forecastAdapterViewHolder.mTrackNameView.setText(trackName);
+        forecastAdapterViewHolder.mTrackSolvedTimeView.setText(trackSolvedTime);
     }
 
     @Override

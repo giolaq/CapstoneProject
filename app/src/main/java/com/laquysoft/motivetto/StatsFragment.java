@@ -1,21 +1,21 @@
 package com.laquysoft.motivetto;
 
 import android.annotation.TargetApi;
-import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import com.laquysoft.motivetto.data.StatsContract;
 
@@ -82,7 +82,7 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         }*/
 
-        final AppBarLayout appbarView = (AppBarLayout)rootView.findViewById(R.id.appbar);
+        final AppBarLayout appbarView = (AppBarLayout) rootView.findViewById(R.id.appbar);
         if (null != appbarView) {
             ViewCompat.setElevation(appbarView, 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -131,6 +131,7 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
             StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME
     };
 
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // This is called when a new Loader needs to be created.  This
@@ -142,15 +143,20 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
                 STAT_COLUMNS,
                 null,
                 null,
-                null);
-    }
-
+                null);    }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
         mStatsAdapter.swapCursor(data);
-        if ( data.getCount() == 0 ) {
+        if (data.getCount() == 0) {
         } else {
+            int count = data.getCount();
+            int dateColumn = data.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_NAME);
+            for (int i = 0; i < count; i++) {
+                data.moveToPosition(i);
+                Log.d(LOG_TAG, "onLoadFinished: " + data.getString(dateColumn));
+            }
+        }
            /* mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
@@ -186,10 +192,13 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
                     return false;
                 }
             });*/
-        }
-
     }
 
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+        mStatsAdapter.swapCursor(null);
+
+    }
 
     @Override
     public void onDestroy() {
@@ -198,10 +207,4 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
             mRecyclerView.clearOnScrollListeners();
         }
     }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mStatsAdapter.swapCursor(null);
-    }
-
 }

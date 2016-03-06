@@ -60,4 +60,6 @@
     <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
     <string name="load">Load</string>
     <string name="options">Options</string>
+    <string name="empty_stats">No stats available</string>
+
 </resources>

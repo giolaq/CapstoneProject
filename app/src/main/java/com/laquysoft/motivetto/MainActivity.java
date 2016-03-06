@@ -525,7 +525,7 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onShowStatsButtonClicked() {
-        String[] projection = {StatsContract.StatsEntry.COLUMN_TRACK_NAME, StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME};
+        /*String[] projection = {StatsContract.StatsEntry.COLUMN_TRACK_NAME, StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME};
         Cursor cursor = getContentResolver().query(
                 StatsContract.StatsEntry.CONTENT_URI, projection, null,
                 null, null);
@@ -539,7 +539,8 @@ public class MainActivity extends FragmentActivity
             } finally {
                 cursor.close();
             }
-        }
+        }*/
+        switchToFragment(mStatsFragment);
 
 
     }
