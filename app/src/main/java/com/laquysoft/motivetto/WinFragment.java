@@ -90,6 +90,7 @@ public class WinFragment extends Fragment implements OnClickListener {
         if (view.getId() == R.id.win_screen_sign_in_button) {
             mListener.onWinScreenSignInClicked();
         }
+        MediaPlayerService.pauseTrack(getActivity());
         mListener.onWinScreenDismissed();
     }
 
