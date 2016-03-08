@@ -20,7 +20,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -101,6 +100,7 @@ public class MainActivity extends FragmentActivity
     private static final String REDIRECT_URI = "yourcustomprotocol://callback";
 
     private String token;
+    private boolean runningGame = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -161,6 +161,7 @@ public class MainActivity extends FragmentActivity
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop(): disconnecting");
+        runningGame = false;
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
@@ -205,6 +206,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onEnteredScore() {
 
+        runningGame = true;
         int requestedScore = mGameplayFragment.stopTimer();
         String trackName = mGameplayFragment.getTrackName();
         String trackArtist = mGameplayFragment.getTrackArtist();
@@ -391,7 +393,12 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onWinScreenDismissed() {
-        switchToFragment(mMainMenuFragment);
+        if (runningGame) {
+            switchToFragment(mGameplayFragment);
+        } else {
+            switchToFragment(mMainMenuFragment);
+
+        }
     }
 
     @Override
