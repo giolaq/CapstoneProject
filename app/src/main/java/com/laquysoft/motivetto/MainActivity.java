@@ -209,10 +209,10 @@ public class MainActivity extends FragmentActivity
         runningGame = true;
         String trackName = mGameplayFragment.getTrackName();
         String trackArtist = mGameplayFragment.getTrackArtist();
-        int solvedTime = mGameplayFragment.getSolvedTime();
+        int solvedTime = mGameplayFragment.stopTimer();
         int solvedMoves = mGameplayFragment.getSolvedMoves();
 
-        int requestedScore = 1000/(mGameplayFragment.stopTimer() + solvedMoves);
+        int requestedScore = 10000/(solvedTime + solvedMoves);
 
         // Compute final score (in easy mode, it's the requested score; in hard mode, it's double)
         int finalScore = mHardMode ? requestedScore * 2 : requestedScore;

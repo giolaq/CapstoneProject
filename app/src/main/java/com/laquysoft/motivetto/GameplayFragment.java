@@ -309,10 +309,9 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     public int stopTimer() {
         t.cancel();
         solvedTime = minutes * 60 + seconds;
-        int points = 600 - (minutes * 60 + seconds);
         MediaPlayerService.setTrackProgressTo(getActivity(), 0);
         MediaPlayerService.playTrackWin(getActivity(),0);
-        return points;
+        return solvedTime;
     }
     private void retrieveSpotifyRandomSongs() {
         SpotifyApi api = new SpotifyApi();
