@@ -30,11 +30,16 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsAdapter
     public class StatsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView mTrackNameView;
         public final TextView mTrackSolvedTimeView;
+        public final TextView mTrackSolvedMoves;
+        public final TextView mTrackEarnedPoints;
+
 
         public StatsAdapterViewHolder(View view) {
             super(view);
             mTrackNameView = (TextView) view.findViewById(R.id.list_item_trackname_textview);
             mTrackSolvedTimeView = (TextView) view.findViewById(R.id.list_item_tracksolvedtime_textview);
+            mTrackSolvedMoves = (TextView) view.findViewById(R.id.list_item_tracksolvedmoves_textview);
+            mTrackEarnedPoints = (TextView) view.findViewById(R.id.list_item_trackearnedpoints_textview);
             view.setOnClickListener(this);
         }
 
@@ -80,9 +85,13 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsAdapter
         mCursor.moveToPosition(position);
         String trackName = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_NAME));
         String trackSolvedTime = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME));
+        String trackSolvedMoves = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES));
+        String trackEarnedPoints = "earned points";
 
         forecastAdapterViewHolder.mTrackNameView.setText(trackName);
         forecastAdapterViewHolder.mTrackSolvedTimeView.setText(trackSolvedTime);
+        forecastAdapterViewHolder.mTrackSolvedMoves.setText(trackSolvedMoves);
+        forecastAdapterViewHolder.mTrackEarnedPoints.setText(trackEarnedPoints);
     }
 
     @Override

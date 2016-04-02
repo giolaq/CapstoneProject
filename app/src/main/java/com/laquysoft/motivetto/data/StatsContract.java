@@ -59,6 +59,8 @@ public class StatsContract {
 
         public static final String COLUMN_TRACK_SOLVED_MOVES = "track_solved_moves";
 
+        public static final String COLUMN_TRACK_HARD_MODE = "track_hard_mode";
+
 
         public static Uri buildStatsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

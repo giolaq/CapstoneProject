@@ -207,16 +207,17 @@ public class MainActivity extends FragmentActivity
     public void onEnteredScore() {
 
         runningGame = true;
-        int requestedScore = mGameplayFragment.stopTimer();
         String trackName = mGameplayFragment.getTrackName();
         String trackArtist = mGameplayFragment.getTrackArtist();
         int solvedTime = mGameplayFragment.getSolvedTime();
         int solvedMoves = mGameplayFragment.getSolvedMoves();
 
-        // Compute final score (in easy mode, it's the requested score; in hard mode, it's half)
-        int finalScore = mHardMode ? requestedScore / 2 : requestedScore;
+        int requestedScore = 1000/(mGameplayFragment.stopTimer() + solvedMoves);
 
-        addStat(trackName, trackArtist, solvedTime, solvedMoves);
+        // Compute final score (in easy mode, it's the requested score; in hard mode, it's double)
+        int finalScore = mHardMode ? requestedScore * 2 : requestedScore;
+
+        addStat(trackName, trackArtist, solvedTime, solvedMoves, mHardMode);
         mWinFragment.setFinalScore(finalScore);
         mWinFragment.setExplanation(mHardMode ? getString(R.string.hard_mode_explanation) :
                 getString(R.string.easy_mode_explanation));
@@ -238,7 +239,7 @@ public class MainActivity extends FragmentActivity
     /**
      * Helper method to handle insertion of a new stat in the stats database.
      */
-    long addStat(String trackName, String trackArtist, int solvedTime, int solvedMoves) {
+    long addStat(String trackName, String trackArtist, int solvedTime, int solvedMoves, boolean isHardMode) {
         long statId;
 
 
@@ -253,6 +254,7 @@ public class MainActivity extends FragmentActivity
         locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_ARTIST, trackArtist);
         locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME, solvedTime);
         locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES, solvedMoves);
+        locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_HARD_MODE, (isHardMode) ? 1 : 0 );
 
         // Finally, insert stat data into the database.
         Uri insertedUri = getContentResolver().insert(

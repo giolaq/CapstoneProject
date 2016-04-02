@@ -128,7 +128,8 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
             // So the convenience is worth it.
             StatsContract.StatsEntry.TABLE_NAME + "." + StatsContract.StatsEntry._ID,
             StatsContract.StatsEntry.COLUMN_TRACK_NAME,
-            StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME
+            StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME,
+            StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES
     };
 
 
@@ -136,7 +137,8 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // This is called when a new Loader needs to be created.  This
         // fragment only uses one loader, so we don't care about checking the id.
-        String[] projection = {StatsContract.StatsEntry.COLUMN_TRACK_NAME, StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME};
+        String[] projection = {StatsContract.StatsEntry.COLUMN_TRACK_NAME, StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME,
+            StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES};
 
         return new CursorLoader(getActivity(),
                 StatsContract.StatsEntry.CONTENT_URI,

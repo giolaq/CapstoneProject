@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class StatsDBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     static final String DATABASE_NAME = "stats.db";
 
@@ -33,6 +33,7 @@ public class StatsDBHelper extends SQLiteOpenHelper {
                 StatsContract.StatsEntry.COLUMN_TRACK_ARTIST + " TEXT NOT NULL, " +
                 StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME + " INTEGER NOT NULL, " +
                 StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES + " INTEGER NOT NULL " +
+                StatsContract.StatsEntry.COLUMN_TRACK_HARD_MODE + " INTEGER " +
                 " );";
 
 
