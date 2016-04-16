@@ -1,64 +1,88 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Copyright (C) 2013 Google Inc.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
--->
-
 <!-- GAMEPLAY SCREEN -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/screen_gameplay"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/col"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/track_name"
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/initial_input"
-        android:textStyle="bold"
-        android:textSize="40sp" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="@dimen/appbar_elevation">
 
-    <TextView
-        android:id="@+id/track_artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:text="@string/initial_input"
-        android:textSize="20sp" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <com.laquysoft.motivetto.GameBoardView
-        android:id="@+id/gameboard"
-        android:layout_width="300dp"
-        android:layout_height="300dp"></com.laquysoft.motivetto.GameBoardView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/listPreferredItemHeight"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:text="Gameplay" />
 
-    <TextView
-        android:id="@+id/timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:text="@string/timer"
-        android:textSize="40sp" />
+        </android.support.v7.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/moves_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:text="@string/moves"
-        android:textSize="40sp" />
+    </android.support.design.widget.AppBarLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/screen_gameplay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="120dp"
+        app:layout_anchor="@+id/appbar"
+        app:layout_anchorGravity="fill">
 
+        <TextView
+            android:id="@+id/track_name"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textAlignment="center"
+            android:text="@string/initial_input"
+            android:layout_gravity="center_horizontal"
+            android:textSize="40sp"
+            android:ellipsize="end"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/track_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textAlignment="center"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/initial_input"
+            android:ellipsize="end"
+            android:textSize="20sp" />
+
+        <com.laquysoft.motivetto.GameBoardView
+            android:id="@+id/gameboard"
+            android:layout_width="300dp"
+            android:layout_height="300dp"></com.laquysoft.motivetto.GameBoardView>
+
+        <TextView
+            android:id="@+id/timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:text="@string/timer"
+            android:textSize="40sp" />
+
+        <TextView
+            android:id="@+id/moves_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:text="@string/moves"
+            android:textSize="40sp" />
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
