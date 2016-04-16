@@ -313,6 +313,15 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         MediaPlayerService.playTrackWin(getActivity(),0);
         return solvedTime;
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(LOG_TAG, "onDetach: ");
+        MediaPlayerService.pauseTrack(getActivity());
+
+    }
+
     private void retrieveSpotifyRandomSongs() {
         SpotifyApi api = new SpotifyApi();
 

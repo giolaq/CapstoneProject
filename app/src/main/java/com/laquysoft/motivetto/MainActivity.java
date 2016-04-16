@@ -143,7 +143,10 @@ public class MainActivity extends FragmentActivity
     // Switch UI to the given fragment
     void switchToFragment(Fragment newFrag) {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag)
+                .addToBackStack(mMainMenuFragment.getClass().getName())
                 .commit();
+
+
     }
 
     private boolean isSignedIn() {
@@ -162,6 +165,8 @@ public class MainActivity extends FragmentActivity
         super.onStop();
         Log.d(TAG, "onStop(): disconnecting");
         runningGame = false;
+        MediaPlayerService.pauseTrack(this);
+
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
@@ -212,7 +217,7 @@ public class MainActivity extends FragmentActivity
         int solvedTime = mGameplayFragment.stopTimer();
         int solvedMoves = mGameplayFragment.getSolvedMoves();
 
-        int requestedScore = 10000/(solvedTime + solvedMoves);
+        int requestedScore = 10000 / (solvedTime + solvedMoves);
 
         // Compute final score (in easy mode, it's the requested score; in hard mode, it's double)
         int finalScore = mHardMode ? requestedScore * 2 : requestedScore;
@@ -254,7 +259,7 @@ public class MainActivity extends FragmentActivity
         locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_ARTIST, trackArtist);
         locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME, solvedTime);
         locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES, solvedMoves);
-        locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_HARD_MODE, (isHardMode) ? 1 : 0 );
+        locationValues.put(StatsContract.StatsEntry.COLUMN_TRACK_HARD_MODE, (isHardMode) ? 1 : 0);
 
         // Finally, insert stat data into the database.
         Uri insertedUri = getContentResolver().insert(
