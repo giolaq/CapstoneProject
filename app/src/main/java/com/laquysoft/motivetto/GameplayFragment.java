@@ -82,6 +82,9 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     private int solvedTime;
     private int solvedMoves;
 
+    GameBoardView gameBoardView;
+    private boolean mode = false;
+
     public void incrementMovesNumber(int moves) {
         solvedMoves = moves;
         TextView movesNumber = ((TextView) getView().findViewById(R.id.moves_number));
@@ -104,6 +107,10 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         return solvedMoves;
     }
 
+    public void setMode(boolean mode) {
+        this.mode = mode;
+    }
+
 
     public interface Listener {
         public void onEnteredScore();
@@ -111,6 +118,8 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         public String onAccessToken();
 
         public void onIncrementMoves(int moves);
+
+        public void onSetMode(boolean mode);
     }
 
     Listener mListener = null;
@@ -248,6 +257,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gameplay, container, false);
+        gameBoardView = (GameBoardView) v.findViewById(R.id.gameboard);
         return v;
     }
 
@@ -258,6 +268,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+        gameBoardView.setMode(mode);
         updateUi();
         retrieveSpotifyRandomSongs();
     }

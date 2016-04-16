@@ -38,12 +38,13 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     protected ArrayList<GameTileMotionDescriptor> currentMotionDescriptors;
     private GameTile touchedTile;
     private int movesNumber = 0;
+    private boolean mode = false;
 
     public GameBoardView(Context context, AttributeSet attrSet) {
         super(context, attrSet);
         Drawable img = getResources().getDrawable(R.drawable.android);
         Bitmap original = ((BitmapDrawable) img).getBitmap();
-        tileServer = new TileServer(original, 3, 3, 68);
+        tileServer = new TileServer(original, 3, 3, 68, mode);
 
         createTiles();
     }
@@ -421,6 +422,16 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
         int top = (coordinate.row * tileSize.height) + gameboardY;
         int left = (coordinate.column * tileSize.width) + gameboardX;
         return new Rect(left, top, left + tileSize.width, top + tileSize.height);
+    }
+
+    public void setMode(boolean mode) {
+        this.mode = mode;
+
+        Drawable img = getResources().getDrawable(R.drawable.android);
+        Bitmap original = ((BitmapDrawable) img).getBitmap();
+        tileServer = new TileServer(original, 3, 3, 68, mode);
+
+        createTiles();
     }
 
     public class Size {

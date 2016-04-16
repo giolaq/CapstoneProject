@@ -90,6 +90,7 @@ public class MainActivity extends FragmentActivity
     final boolean ENABLE_DEBUG = true;
     final String TAG = "TanC";
 
+
     // playing on hard mode?
     boolean mHardMode = false;
 
@@ -216,6 +217,7 @@ public class MainActivity extends FragmentActivity
      */
     void startGame(boolean hardMode) {
         mHardMode = hardMode;
+        onSetMode(mHardMode);
         switchToFragment(mGameplayFragment);
     }
 
@@ -294,6 +296,11 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onIncrementMoves(int moves) {
         mGameplayFragment.incrementMovesNumber(moves);
+    }
+
+    @Override
+    public void onSetMode(boolean mode) {
+        mGameplayFragment.setMode(mode);
     }
 
     // Checks if n is prime. We don't consider 0 and 1 to be prime.
@@ -597,6 +604,11 @@ public class MainActivity extends FragmentActivity
              * from the file you wrote in saveLocal(). */
         }
 
+    }
+
+
+    public boolean isHardMode() {
+        return mHardMode;
     }
 
     @Override
