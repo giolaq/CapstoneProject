@@ -260,7 +260,6 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         super.onStart();
         updateUi();
         retrieveSpotifyRandomSongs();
-        startTimer();
     }
 
     @Override
@@ -373,7 +372,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
                         trackName = track.name;
                         trackNameTv.setText(trackName);
-                        
+                        trackNameTv.setVisibility(View.VISIBLE);
 
                         StringBuilder sb = new StringBuilder();
                         for ( ArtistSimple artist : track.artists) {
@@ -382,6 +381,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
                         
                         trackArtistName = sb.toString();
                         trackArtistNameTv.setText(trackArtistName);
+                        trackArtistNameTv.setVisibility(View.VISIBLE);
 
                         ParcelableSpotifyObject parcelableSpotifyObject = new ParcelableSpotifyObject(track.name,
                                 track.album.name,
@@ -392,6 +392,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
                         ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
                         tracks.add(parcelableSpotifyObject);
                         MediaPlayerService.setTracks(getContext(), tracks);
+                        startTimer();
 
                     }
                 }

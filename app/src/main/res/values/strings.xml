@@ -31,7 +31,7 @@
     <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
     <string name="what_score_do_you_deserve">What score do you think you deserve?</string>
     <string name="initial_input">00000000000000000000000000</string>
-    <string name="timer">Time:time</string>
+    <string name="timer">Time: -:--</string>
     <string name="moves">0</string>
     <string name="digit0"> 0 </string>
     <string name="digit1">1</string>

@@ -50,7 +50,8 @@
             android:layout_gravity="center_horizontal"
             android:textSize="40sp"
             android:ellipsize="end"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible"/>
 
         <TextView
             android:id="@+id/track_artist"
@@ -60,7 +61,8 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/initial_input"
             android:ellipsize="end"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="invisible"/>
 
         <com.laquysoft.motivetto.GameBoardView
             android:id="@+id/gameboard"
