@@ -46,6 +46,20 @@
             android:exported="false"
             android:syncable="true" />
 
+        <service android:name=".widget.StatsWidgetIntentService" />
+
+        <receiver
+            android:name=".widget.StatsWidgetProvider"
+            android:label="@string/title_widget_stats">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.laquysoft.motivetto.ACTION_STATS_UPDATED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_stats" />
+        </receiver>
     </application>
 
 </manifest>

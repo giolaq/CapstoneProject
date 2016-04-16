@@ -61,5 +61,6 @@
     <string name="load">Load</string>
     <string name="options">Options</string>
     <string name="empty_stats">No stats available</string>
+    <string name="title_widget_stats">Motivetto Stats</string>
 
 </resources>
