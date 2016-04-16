@@ -83,8 +83,6 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
 
     void updateUi() {
         if (getActivity() == null) return;
-        TextView tv = (TextView) getActivity().findViewById(R.id.hello);
-        if (tv != null) tv.setText(mGreeting);
         if ( getActivity().findViewById(R.id.sign_in_bar) == null) return;
         getActivity().findViewById(R.id.sign_in_bar).setVisibility(mShowSignIn ?
                 View.VISIBLE : View.GONE);
