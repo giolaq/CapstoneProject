@@ -21,9 +21,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.transition.AutoTransition;
+import android.transition.Fade;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -142,6 +145,14 @@ public class MainActivity extends FragmentActivity
 
     // Switch UI to the given fragment
     void switchToFragment(Fragment newFrag) {
+
+        // Note that we need the API version check here because the actual transition classes (e.g. Fade)
+// are not in the support library and are only available in API 21+. The methods we are calling on the Fragment
+// ARE available in the support library (though they don't do anything on API < 21)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            newFrag.setEnterTransition(new AutoTransition());
+            newFrag.setExitTransition(new Fade());
+        }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag)
                 .addToBackStack(mMainMenuFragment.getClass().getName())
                 .commit();
