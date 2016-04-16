@@ -436,6 +436,29 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     }
 
     private boolean checkWin() {
+        /* int seekTime = 0;
+        for (int rowI = 0; rowI < 3; rowI++) {
+            for ( int colI = 0; colI < 3; colI++) {
+                GameTile tile1 = getTileAtCoordinate(new Coordinate(rowI, colI));
+                if (rowI == 2 && colI == 2)
+                    return true;
+                if ( tile1 == null) {
+                    return false;
+                }
+                if (tile1.seekTime!=seekTime) {
+                    Log.d(LOG_TAG, "checkWin: " + rowI + " " + colI
+                     + tile1.seekTime + " " + seekTime);
+
+                    return false;
+                }
+                seekTime = seekTime + 3;
+            }
+        }
+
+        Log.d(LOG_TAG, "checkWin: WIN");
+        Toast.makeText(getContext(), "WIN", Toast.LENGTH_LONG).show();
+        playWin();
+        return true;*/
 
         GameTile tile3 = getTileAtCoordinate(new Coordinate(0, 2));
         GameTile tile4 = getTileAtCoordinate(new Coordinate(1, 0));
