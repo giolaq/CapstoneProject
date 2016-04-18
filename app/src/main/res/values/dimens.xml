@@ -8,4 +8,16 @@
 
     <!-- Needed if we aren't including the Material Design Library -->
     <dimen name="appbar_elevation">4dp</dimen>
+
+
+
+    <!-- Today Widget -->
+    <dimen name="widget_stats_default_width">110dp</dimen>
+    <dimen name="widget_stats_default_height">40dp</dimen>
+    <dimen name="widget_stats_min_resize_width">40dp</dimen>
+    <dimen name="widget_stats_min_resize_height">@dimen/widget_stats_default_height</dimen>
+    <dimen name="widget_stats_large_width">220dp</dimen>
+
+    <dimen name="widget_margin">8dp</dimen>
+
 </resources>

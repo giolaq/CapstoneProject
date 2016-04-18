@@ -6,7 +6,7 @@
     android:minResizeHeight="@dimen/widget_stats_min_resize_height"
     android:minResizeWidth="@dimen/widget_stats_min_resize_width"
     android:minWidth="@dimen/widget_stats_default_width"
-    android:previewImage="@drawable/widget_preview_stats"
+    android:previewImage="@drawable/ic_motivetto_logo"
     android:resizeMode="horizontal"
     android:updatePeriodMillis="0"
     tools:ignore="UnusedAttribute" />

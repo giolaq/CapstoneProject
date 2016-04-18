@@ -24,6 +24,9 @@ public class StatsContract {
     // Possible paths (appended to base content URI for possible URI's)
     public static final String PATH_STATS = "stats";
 
+    public static final String ACTION_STATS_DATA_UPDATED =
+            "com.laquysoft.motivetto.ACTION_DATA_UPDATED";
+
     // To make it easy to query for the exact date, we normalize all dates that go into
     // the database to the start of the the Julian day at UTC.
     public static long normalizeDate(long startDate) {

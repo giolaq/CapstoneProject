@@ -31,6 +31,7 @@ public class StatsFragment extends Fragment implements LoaderManager.LoaderCallb
     private StatsAdapter mStatsAdapter;
 
 
+
     private static final int STAT_LOADER = 0;
 
     @Override

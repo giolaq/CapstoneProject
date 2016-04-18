@@ -15,9 +15,8 @@ import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import com.laquysoft.motivetto.MainActivity;
-import com.laquysoft.motivetto.data.StatsContract;
-
 import com.laquysoft.motivetto.R;
+import com.laquysoft.motivetto.data.StatsContract;
 
 /**
  * Created by joaobiriba on 16/04/16.
@@ -43,7 +42,7 @@ public class StatsWidgetIntentService extends IntentService {
                 StatsWidgetProvider.class));
 
         // Get stats data from the ContentProvider
-        Uri statsUri =  StatsContract.StatsEntry.CONTENT_URI;
+        Uri statsUri = StatsContract.StatsEntry.CONTENT_URI;
         Cursor data = getContentResolver().query(statsUri, STAT_COLUMNS, null,
                 null, null);
         if (data == null) {
@@ -54,43 +53,51 @@ public class StatsWidgetIntentService extends IntentService {
             return;
         }
 
-        // Extract and sum points
+        int solved_time = Integer.parseInt(data.getString(data.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME)));
+        int solved_moves = Integer.parseInt(data.getString(data.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES)));
+        int points = 1000 / solved_moves * solved_time;
+
+
+        while (data.moveToNext()) {
+            solved_time = Integer.parseInt(data.getString(data.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME)));
+            solved_moves = Integer.parseInt(data.getString(data.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES)));
+            points += 1000 / solved_moves * solved_time;
+        }
+
 
         data.close();
 
         // Perform this loop procedure for each Today widget
         for (int appWidgetId : appWidgetIds) {
             // Find the correct layout based on the widget's width
-//            int widgetWidth = getWidgetWidth(appWidgetManager, appWidgetId);
-//            int defaultWidth = getResources().getDimensionPixelSize(R.dimen.widget_today_default_width);
-//            int largeWidth = getResources().getDimensionPixelSize(R.dimen.widget_today_large_width);
-//            int layoutId;
-//            if (widgetWidth >= largeWidth) {
-//                layoutId = R.layout.widget_today_large;
-//            } else if (widgetWidth >= defaultWidth) {
-//                layoutId = R.layout.widget_today;
-//            } else {
-//                layoutId = R.layout.widget_today_small;
-//            }
-//            RemoteViews views = new RemoteViews(getPackageName(), layoutId);
+            int widgetWidth = getWidgetWidth(appWidgetManager, appWidgetId);
+            int defaultWidth = getResources().getDimensionPixelSize(R.dimen.widget_stats_default_width);
+            int largeWidth = getResources().getDimensionPixelSize(R.dimen.widget_stats_large_width);
+            int layoutId;
+            //if (widgetWidth >= largeWidth) {
+            //  layoutId = R.layout.widget_stats;
+            //} else if (widgetWidth >= defaultWidth) {
+            layoutId = R.layout.widget_stats;
+            //} else {
+            //   layoutId = R.layout.widget_today_small;
+            // }
+            RemoteViews views = new RemoteViews(getPackageName(), layoutId);
 
-            // Add the data to the RemoteViews
-//            views.setImageViewResource(R.id.widget_icon, weatherArtResourceId);
-//            // Content Descriptions for RemoteViews were only added in ICS MR1
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-//                setRemoteContentDescription(views, description);
-//            }
-//            views.setTextViewText(R.id.widget_description, description);
-//            views.setTextViewText(R.id.widget_high_temperature, formattedMaxTemperature);
-//            views.setTextViewText(R.id.widget_low_temperature, formattedMinTemperature);
+
+            // Content Descriptions for RemoteViews were only added in ICS MR1
+            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            //   setRemoteContentDescription(views, description);
+            //}
+            //views.setTextViewText(R.id.widget_description, description);
+            views.setTextViewText(R.id.widget_points, Integer.toString(points));
 
             // Create an Intent to launch MainActivity
             Intent launchIntent = new Intent(this, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
-//            views.setOnClickPendingIntent(R.id.widget, pendingIntent);
+            views.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
             // Tell the AppWidgetManager to perform an update on the current app widget
-//            appWidgetManager.updateAppWidget(appWidgetId, views);
+            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
 
@@ -114,12 +121,11 @@ public class StatsWidgetIntentService extends IntentService {
             return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, minWidthDp,
                     displayMetrics);
         }
-        return 0;
-//        return  getResources().getDimensionPixelSize(R.dimen.widget_today_default_width);
+        return getResources().getDimensionPixelSize(R.dimen.widget_stats_default_width);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     private void setRemoteContentDescription(RemoteViews views, String description) {
- //       views.setContentDescription(R.id.widget_icon, description);
+        views.setContentDescription(R.id.widget_icon, description);
     }
 }

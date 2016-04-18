@@ -236,6 +236,9 @@ public class MainActivity extends FragmentActivity
         int finalScore = mHardMode ? requestedScore * 2 : requestedScore;
 
         addStat(trackName, trackArtist, solvedTime, solvedMoves, mHardMode);
+
+        updateWidgets();
+
         mWinFragment.setFinalScore(finalScore);
         mWinFragment.setExplanation(mHardMode ? getString(R.string.hard_mode_explanation) :
                 getString(R.string.easy_mode_explanation));
@@ -251,6 +254,13 @@ public class MainActivity extends FragmentActivity
 
         // switch to the exciting "you won" screen
         switchToFragment(mWinFragment);
+    }
+
+    private void updateWidgets() {
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(StatsContract.ACTION_STATS_DATA_UPDATED)
+                .setPackage(getPackageName());
+        sendBroadcast(dataUpdatedIntent);
     }
 
 
