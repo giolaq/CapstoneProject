@@ -16,8 +16,10 @@
 
 package com.laquysoft.motivetto;
 
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,9 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.laquysoft.motivetto.common.MainThreadBus;
 import com.laquysoft.motivetto.components.DaggerEventBusComponent;
@@ -38,24 +38,12 @@ import com.laquysoft.motivetto.model.ParcelableSpotifyObject;
 import com.laquysoft.motivetto.modules.EventBusModule;
 import com.squareup.otto.Subscribe;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.inject.Inject;
-
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.ArtistSimple;
-import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.TracksPager;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Fragment for the gameplay portion of the game. It shows the keypad
@@ -84,6 +72,9 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
     GameBoardView gameBoardView;
     private boolean mode = false;
+
+
+    MySpotifyServiceReceiver mySpotifyServiceReceiver;
 
     public void incrementMovesNumber(int moves) {
         solvedMoves = moves;
@@ -126,131 +117,16 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
     private int trackseconds = 0;
 
-
-    /**
-     * Words list to select from
-     */
-    String wordsList[] = {
-            "Help",
-            "Love",
-            "Hate",
-            "Desperate",
-            "Open",
-            "Close",
-            "Baby",
-            "Girl",
-            "Yeah",
-            "Whoa",
-            "Start",
-            "Finish",
-            "Beginning",
-            "End",
-            "Fight",
-            "War",
-            "Running",
-            "Want",
-            "Need",
-            "Fire",
-            "Myself",
-            "Alive",
-            "Life",
-            "Dead",
-            "Death",
-            "Kill",
-            "Different",
-            "Alone",
-            "Lonely",
-            "Darkness",
-            "Home",
-            "Gone",
-            "Break",
-            "Heart",
-            "Floating",
-            "Searching",
-            "Dreaming",
-            "Serenity",
-            "Star",
-            "Recall",
-            "Think",
-            "Feel",
-            "Slow",
-            "Speed",
-            "Fast",
-            "World",
-            "Work",
-            "Miss",
-            "Stress",
-            "Please",
-            "More",
-            "Less",
-            "only",
-            "World",
-            "Moving",
-            "lasting",
-            "Rise",
-            "Save",
-            "Wake",
-            "Over",
-            "High",
-            "Above",
-            "Taking",
-            "Go",
-            "Why",
-            "Before",
-            "After",
-            "Along",
-            "See",
-            "Hear",
-            "Feel",
-            "Change",
-            "Body",
-            "Being",
-            "Soul",
-            "Spirit",
-            "God",
-            "Angel",
-            "Devil",
-            "Demon",
-            "Believe",
-            "Away",
-            "Everything",
-            "Shared",
-            "Something",
-            "Everything",
-            "Control",
-            "Heart",
-            "Away",
-            "Waiting",
-            "Loyalty",
-            "Shared",
-            "Remember",
-            "Yesterday",
-            "Today",
-            "Tomorrow",
-            "Fall",
-            "Memories",
-            "Apart",
-            "Time",
-            "Forever",
-            "Breath",
-            "Lie",
-            "Sleep",
-            "Inside",
-            "Outside",
-            "Catch",
-            "Be",
-            "Pretending"
-    };
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBusComponent component = DaggerEventBusComponent.builder().eventBusModule(new EventBusModule()).build();
         bus = component.provideMainThreadBus();
-        if ( !isRegistered ) {
+        if (!isRegistered) {
             bus.register(this);
             isRegistered = true;
         }
+
     }
 
     @Override
@@ -268,6 +144,14 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MySpotifyServiceReceiver.PROCESS_RESPONSE);
+        filter.addAction(MySpotifyServiceReceiver.PROCESS_RESPONSE_NO_TRACK);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        mySpotifyServiceReceiver = new MySpotifyServiceReceiver();
+        getActivity().registerReceiver(mySpotifyServiceReceiver, filter);
+
         gameBoardView.setMode(mode);
         updateUi();
         retrieveSpotifyRandomSongs();
@@ -276,13 +160,15 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     @Override
     public void onStop() {
         super.onStop();
+
+        getActivity().unregisterReceiver(mySpotifyServiceReceiver);
         t.cancel();
         t.purge();
     }
 
     public void startTimer() {
-        minutes=0;
-        seconds=0;
+        minutes = 0;
+        seconds = 0;
         //Declare the timer
         t = new Timer();
         //Set the schedule function and rate
@@ -320,7 +206,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
         t.cancel();
         solvedTime = minutes * 60 + seconds;
         MediaPlayerService.setTrackProgressTo(getActivity(), 0);
-        MediaPlayerService.playTrackWin(getActivity(),0);
+        MediaPlayerService.playTrackWin(getActivity(), 0);
         return solvedTime;
     }
 
@@ -333,88 +219,12 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     }
 
     private void retrieveSpotifyRandomSongs() {
-        SpotifyApi api = new SpotifyApi();
 
+        Intent msgIntent = new Intent(getContext(), SpotifyIntentService.class);
 
-// Most (but not all) of the Spotify Web API endpoints require authorisation.
-// If you know you"ll only use the ones that don"t require authorisation you can skip this step
-        api.setAccessToken(mListener.onAccessToken());
+        msgIntent.putExtra(SpotifyIntentService.TOKEN, mListener.onAccessToken());
+        getActivity().startService(msgIntent);
 
-        SpotifyService spotify = api.getService();
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("limit", 1);
-        parameters.put("offset", new Random().nextInt(5));
-
-        StringBuilder builder = new StringBuilder();
-        for (String s : selectWords(2)) {
-            builder.append(s + " ");
-        }
-
-        spotify.searchTracks(builder.toString(), parameters, new Callback<TracksPager>() {
-            @Override
-            public void success(TracksPager tracksPager, Response response) {
-                if (tracksPager.tracks.items.size() > 0) {
-                    String trackUrl = tracksPager.tracks.items.get(0).preview_url;
-                    Log.d("Track success", trackUrl);
-                    //playTrack(trackUrl);
-                }
-
-                if (tracksPager.tracks.items.size() <= 0) {
-                    Toast.makeText(getActivity(), "Track not found, please refine your search", Toast.LENGTH_LONG).show();
-                } else {
-                    String smallImageUrl = "";
-                    String bigImageUrl = "";
-                    for (Track track : tracksPager.tracks.items) {
-                        if (!track.album.images.isEmpty()) {
-                            smallImageUrl = track.album.images.get(0).url;
-                        }
-                        if (track.album.images.size() > 1) {
-                            bigImageUrl = track.album.images.get(1).url;
-                        }
-                        StringBuilder builder = new StringBuilder();
-                        for (ArtistSimple artist : track.artists) {
-                            if (builder.length() > 0) builder.append(", ");
-                            builder.append(artist.name);
-                        }
-
-                        TextView trackNameTv = ((TextView) getActivity().findViewById(R.id.track_name));
-                        TextView trackArtistNameTv = ((TextView) getActivity().findViewById(R.id.track_artist));
-
-                        trackName = track.name;
-                        trackNameTv.setText(trackName);
-                        trackNameTv.setVisibility(View.VISIBLE);
-
-                        StringBuilder sb = new StringBuilder();
-                        for ( ArtistSimple artist : track.artists) {
-                            sb.append(artist.name + " ");
-                        }
-                        
-                        trackArtistName = sb.toString();
-                        trackArtistNameTv.setText(trackArtistName);
-                        trackArtistNameTv.setVisibility(View.VISIBLE);
-
-                        ParcelableSpotifyObject parcelableSpotifyObject = new ParcelableSpotifyObject(track.name,
-                                track.album.name,
-                                builder.toString(),
-                                smallImageUrl,
-                                bigImageUrl,
-                                track.preview_url);
-                        ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
-                        tracks.add(parcelableSpotifyObject);
-                        MediaPlayerService.setTracks(getContext(), tracks);
-                        startTimer();
-
-                    }
-                }
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("Album failure", error.toString());
-            }
-        });
     }
 
 
@@ -426,27 +236,11 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     public void onClick(View view) {
     }
 
-    /**
-     * Select 1 to `max` words from the words list
-     */
-    public String[] selectWords(int max) {
-        if (max < 1) max = 1;
-        int howMany = new Random().nextInt(max) + 1;
-        int listLength = wordsList.length;
-        String words[] = new String[howMany];
-        for (int i = 0; i < howMany; i++) {
-            int r = new Random().nextInt(listLength - 0 + 1);
-            words[i] = wordsList[r];
-        }
-        return words;
-    }
-
-
     @Subscribe
     public void getTrackPlaying(TrackPlayingEvent trackPlayingEvent) {
         trackseconds++;
         Log.d(LOG_TAG, "trackplay " + trackPlayingEvent.getProgress());
-        if ( trackseconds == 3 ) {
+        if (trackseconds == 3) {
             MediaPlayerService.pauseTrack(getContext());
         }
 
@@ -456,5 +250,44 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     public void getTrackPaused(TrackPausedEvent trackPausedEvent) {
         trackseconds = 0;
     }
+
+
+    public class MySpotifyServiceReceiver extends BroadcastReceiver {
+
+        public static final String PROCESS_RESPONSE = "com.laquysoft.motivetto.PROCESS_RESPONSE";
+        public static final String PROCESS_RESPONSE_NO_TRACK = "com.laquysoft.motivetto.PROCESS_RESPONSE_NO_TRACK";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if ( PROCESS_RESPONSE.contains(intent.getAction())) {
+                ParcelableSpotifyObject parcelableSpotifyObject = intent.getExtras().getParcelable("spotifyobject");
+
+                TextView trackNameTv = ((TextView) getActivity().findViewById(R.id.track_name));
+                TextView trackArtistNameTv = ((TextView) getActivity().findViewById(R.id.track_artist));
+
+                trackName = parcelableSpotifyObject.mName;
+                trackNameTv.setText(trackName);
+                trackNameTv.setVisibility(View.VISIBLE);
+                trackArtistName = parcelableSpotifyObject.mArtistName;
+                trackArtistNameTv.setText(trackArtistName);
+                trackArtistNameTv.setVisibility(View.VISIBLE);
+
+
+                ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
+                tracks.add(parcelableSpotifyObject);
+                MediaPlayerService.setTracks(getContext(), tracks);
+                startTimer();
+
+            } else {
+                Log.d(LOG_TAG, "onReceive: retry to retrieve songs");
+                retrieveSpotifyRandomSongs();
+            }
+
+        }
+
+
+    }
+
 
 }
