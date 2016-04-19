@@ -172,7 +172,7 @@ public class SpotifyIntentService extends IntentService {
         int listLength = wordsList.length;
         String words[] = new String[howMany];
         for (int i = 0; i < howMany; i++) {
-            int r = new Random().nextInt(listLength - 0 + 1);
+            int r = new Random().nextInt(listLength);
             words[i] = wordsList[r];
         }
         return words;
@@ -252,6 +252,11 @@ public class SpotifyIntentService extends IntentService {
             @Override
             public void failure(RetrofitError error) {
                 Log.d("Album failure", error.toString());
+
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(GameplayFragment.MySpotifyServiceReceiver.PROCESS_RESPONSE_NO_TRACK);
+                broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                sendBroadcast(broadcastIntent);
             }
         });
     }
