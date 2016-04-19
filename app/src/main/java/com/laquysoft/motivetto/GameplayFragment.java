@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.laquysoft.motivetto.common.MainThreadBus;
@@ -75,6 +76,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
 
     MySpotifyServiceReceiver mySpotifyServiceReceiver;
+    private ProgressBar progressBar;
 
     public void incrementMovesNumber(int moves) {
         solvedMoves = moves;
@@ -134,6 +136,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gameplay, container, false);
         gameBoardView = (GameBoardView) v.findViewById(R.id.gameboard);
+        progressBar = (ProgressBar) v.findViewById(R.id.progress);
         return v;
     }
 
@@ -144,6 +147,8 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+
+        progressBar.setVisibility(View.VISIBLE);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(MySpotifyServiceReceiver.PROCESS_RESPONSE);
@@ -273,6 +278,7 @@ public class GameplayFragment extends Fragment implements OnClickListener {
                 trackArtistNameTv.setText(trackArtistName);
                 trackArtistNameTv.setVisibility(View.VISIBLE);
 
+                progressBar.setVisibility(View.GONE);
 
                 ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
                 tracks.add(parcelableSpotifyObject);
