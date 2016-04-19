@@ -119,8 +119,14 @@ public class MainActivity extends FragmentActivity
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-        // create fragments
-        mMainMenuFragment = new MainMenuFragment();
+        if (savedInstanceState == null) {
+           // create fragments
+            mMainMenuFragment = new MainMenuFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mMainMenuFragment, "MainMenuFragment").commit();
+        } else {
+             mMainMenuFragment = (MainMenuFragment) getSupportFragmentManager().findFragmentByTag("MainMenuFragment");
+        }
+
         mGameplayFragment = new GameplayFragment();
         mWinFragment = new WinFragment();
         mStatsFragment = new StatsFragment();
@@ -130,15 +136,6 @@ public class MainActivity extends FragmentActivity
         mGameplayFragment.setListener(this);
         mWinFragment.setListener(this);
 
-        // add initial fragment (welcome fragment)
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
-                mMainMenuFragment).commit();
-
-        // IMPORTANT: if this Activity supported rotation, we'd have to be
-        // more careful about adding the fragment, since the fragment would
-        // already be there after rotation and trying to add it again would
-        // result in overlapping fragments. But since we don't support rotation,
-        // we don't deal with that for code simplicity.
 
         // load outbox from file
         mOutbox.loadLocal(this);
