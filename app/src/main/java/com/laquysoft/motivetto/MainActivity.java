@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.transition.AutoTransition;
 import android.transition.Fade;
 import android.util.Log;
@@ -143,6 +144,8 @@ public class MainActivity extends FragmentActivity
 
     // Switch UI to the given fragment
     void switchToFragment(Fragment newFrag) {
+
+        getSupportFragmentManager().popBackStack(mMainMenuFragment.getClass().getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         // Note that we need the API version check here because the actual transition classes (e.g. Fade)
 // are not in the support library and are only available in API 21+. The methods we are calling on the Fragment
@@ -425,6 +428,7 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onWinScreenDismissed() {
+
         if (runningGame) {
             switchToFragment(mGameplayFragment);
         } else {

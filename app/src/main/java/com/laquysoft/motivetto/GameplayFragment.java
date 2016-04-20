@@ -20,10 +20,10 @@ package com.laquysoft.motivetto;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -52,7 +52,7 @@ import javax.inject.Inject;
  *
  * @author Bruno Oliveira (Google)
  */
-public class GameplayFragment extends Fragment  {
+public class GameplayFragment extends Fragment {
 
     private static final String LOG_TAG = GameplayFragment.class.getSimpleName();
     int mRequestedScore = 5000;
@@ -210,7 +210,6 @@ public class GameplayFragment extends Fragment  {
         super.onDetach();
         Log.d(LOG_TAG, "onDetach: ");
         MediaPlayerService.pauseTrack(getActivity());
-
     }
 
     private void retrieveSpotifyRandomSongs() {
@@ -262,7 +261,7 @@ public class GameplayFragment extends Fragment  {
 
     @Subscribe
     public void getSpotifyTrackFound(SpotifyTrackFoundEvent spotifyTrackFoundEvent) {
-       updateUI(spotifyTrackFoundEvent.getTrack());
+        updateUI(spotifyTrackFoundEvent.getTrack());
     }
 
     @Subscribe
