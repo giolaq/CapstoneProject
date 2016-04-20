@@ -16,10 +16,8 @@
 
 package com.laquysoft.motivetto;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -33,6 +31,8 @@ import android.widget.TextView;
 import com.laquysoft.motivetto.common.MainThreadBus;
 import com.laquysoft.motivetto.components.DaggerEventBusComponent;
 import com.laquysoft.motivetto.components.EventBusComponent;
+import com.laquysoft.motivetto.events.SpotifyNoTrackFoundEvent;
+import com.laquysoft.motivetto.events.SpotifyTrackFoundEvent;
 import com.laquysoft.motivetto.events.TrackPausedEvent;
 import com.laquysoft.motivetto.events.TrackPlayingEvent;
 import com.laquysoft.motivetto.model.ParcelableSpotifyObject;
@@ -40,11 +40,11 @@ import com.laquysoft.motivetto.modules.EventBusModule;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.inject.Inject;
+
 
 /**
  * Fragment for the gameplay portion of the game. It shows the keypad
@@ -52,7 +52,7 @@ import javax.inject.Inject;
  *
  * @author Bruno Oliveira (Google)
  */
-public class GameplayFragment extends Fragment implements OnClickListener {
+public class GameplayFragment extends Fragment  {
 
     private static final String LOG_TAG = GameplayFragment.class.getSimpleName();
     int mRequestedScore = 5000;
@@ -75,7 +75,6 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     private boolean mode = false;
 
 
-    MySpotifyServiceReceiver mySpotifyServiceReceiver;
     private ProgressBar progressBar;
 
     public void incrementMovesNumber(int moves) {
@@ -150,23 +149,14 @@ public class GameplayFragment extends Fragment implements OnClickListener {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MySpotifyServiceReceiver.PROCESS_RESPONSE);
-        filter.addAction(MySpotifyServiceReceiver.PROCESS_RESPONSE_NO_TRACK);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        mySpotifyServiceReceiver = new MySpotifyServiceReceiver();
-        getActivity().registerReceiver(mySpotifyServiceReceiver, filter);
-
         gameBoardView.setMode(mode);
-        updateUi();
+
         retrieveSpotifyRandomSongs();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        getActivity().unregisterReceiver(mySpotifyServiceReceiver);
         t.cancel();
         t.purge();
     }
@@ -233,13 +223,26 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     }
 
 
-    void updateUi() {
-        if (getActivity() == null) return;
+    private void updateUI(ParcelableSpotifyObject track) {
+        TextView trackNameTv = ((TextView) getActivity().findViewById(R.id.track_name));
+        TextView trackArtistNameTv = ((TextView) getActivity().findViewById(R.id.track_artist));
+
+        trackName = track.mName;
+        trackNameTv.setText(trackName);
+        trackNameTv.setVisibility(View.VISIBLE);
+        trackArtistName = track.mArtistName;
+        trackArtistNameTv.setText(trackArtistName);
+        trackArtistNameTv.setVisibility(View.VISIBLE);
+
+        progressBar.setVisibility(View.GONE);
+
+        ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
+        tracks.add(track);
+        MediaPlayerService.setTracks(getContext(), tracks);
+        startTimer();
+
     }
 
-    @Override
-    public void onClick(View view) {
-    }
 
     @Subscribe
     public void getTrackPlaying(TrackPlayingEvent trackPlayingEvent) {
@@ -257,42 +260,15 @@ public class GameplayFragment extends Fragment implements OnClickListener {
     }
 
 
-    public class MySpotifyServiceReceiver extends BroadcastReceiver {
+    @Subscribe
+    public void getSpotifyTrackFound(SpotifyTrackFoundEvent spotifyTrackFoundEvent) {
+       updateUI(spotifyTrackFoundEvent.getTrack());
+    }
 
-        public static final String PROCESS_RESPONSE = "com.laquysoft.motivetto.PROCESS_RESPONSE";
-        public static final String PROCESS_RESPONSE_NO_TRACK = "com.laquysoft.motivetto.PROCESS_RESPONSE_NO_TRACK";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if ( PROCESS_RESPONSE.contains(intent.getAction())) {
-                ParcelableSpotifyObject parcelableSpotifyObject = intent.getExtras().getParcelable("spotifyobject");
-
-                TextView trackNameTv = ((TextView) getActivity().findViewById(R.id.track_name));
-                TextView trackArtistNameTv = ((TextView) getActivity().findViewById(R.id.track_artist));
-
-                trackName = parcelableSpotifyObject.mName;
-                trackNameTv.setText(trackName);
-                trackNameTv.setVisibility(View.VISIBLE);
-                trackArtistName = parcelableSpotifyObject.mArtistName;
-                trackArtistNameTv.setText(trackArtistName);
-                trackArtistNameTv.setVisibility(View.VISIBLE);
-
-                progressBar.setVisibility(View.GONE);
-
-                ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
-                tracks.add(parcelableSpotifyObject);
-                MediaPlayerService.setTracks(getContext(), tracks);
-                startTimer();
-
-            } else {
-                Log.d(LOG_TAG, "onReceive: retry to retrieve songs");
-                retrieveSpotifyRandomSongs();
-            }
-
-        }
-
-
+    @Subscribe
+    public void getSpotifyNoTrackFound(SpotifyNoTrackFoundEvent spotifyNoTrackFoundEvent) {
+        Log.d(LOG_TAG, "getSpotifyNoTrackFound: ");
+        retrieveSpotifyRandomSongs();
     }
 
 

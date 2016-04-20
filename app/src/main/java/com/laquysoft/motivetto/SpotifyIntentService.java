@@ -3,16 +3,20 @@ package com.laquysoft.motivetto;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.laquysoft.motivetto.common.MainThreadBus;
+import com.laquysoft.motivetto.components.DaggerEventBusComponent;
+import com.laquysoft.motivetto.components.EventBusComponent;
+import com.laquysoft.motivetto.events.SpotifyNoTrackFoundEvent;
+import com.laquysoft.motivetto.events.SpotifyTrackFoundEvent;
 import com.laquysoft.motivetto.model.ParcelableSpotifyObject;
+import com.laquysoft.motivetto.modules.EventBusModule;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import javax.inject.Inject;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -30,6 +34,9 @@ public class SpotifyIntentService extends IntentService {
 
 
     private static final String LOG_TAG = SpotifyIntentService.class.getSimpleName();
+
+    @Inject
+    MainThreadBus bus;
     /**
      * Words list to select from
      */
@@ -152,6 +159,11 @@ public class SpotifyIntentService extends IntentService {
 
     public SpotifyIntentService() {
         super("SpotifyIntentService");
+
+        EventBusComponent component = DaggerEventBusComponent.builder().eventBusModule(new EventBusModule()).build();
+
+        bus = component.provideMainThreadBus();
+        bus.register(this);
     }
 
     @Override
@@ -209,11 +221,8 @@ public class SpotifyIntentService extends IntentService {
 
                 if (tracksPager.tracks.items.size() <= 0) {
                     Log.d(LOG_TAG, "success() but no tracks called with: response = [" + response + "]");
+                    launchNoTrackFoundEvent();
 
-                    Intent broadcastIntent = new Intent();
-                    broadcastIntent.setAction(GameplayFragment.MySpotifyServiceReceiver.PROCESS_RESPONSE_NO_TRACK);
-                    broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                    sendBroadcast(broadcastIntent);
                 } else {
                     String smallImageUrl = "";
                     String bigImageUrl = "";
@@ -238,11 +247,8 @@ public class SpotifyIntentService extends IntentService {
                                 track.preview_url);
 
 
-                        Intent broadcastIntent = new Intent();
-                        broadcastIntent.setAction(GameplayFragment.MySpotifyServiceReceiver.PROCESS_RESPONSE);
-                        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                        broadcastIntent.putExtra("spotifyobject", parcelableSpotifyObject);
-                        sendBroadcast(broadcastIntent);
+                        SpotifyTrackFoundEvent event = SpotifyTrackFoundEvent.newInstance(parcelableSpotifyObject);
+                        bus.post(event);
 
                     }
                 }
@@ -252,13 +258,13 @@ public class SpotifyIntentService extends IntentService {
             @Override
             public void failure(RetrofitError error) {
                 Log.d("Album failure", error.toString());
-
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(GameplayFragment.MySpotifyServiceReceiver.PROCESS_RESPONSE_NO_TRACK);
-                broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                sendBroadcast(broadcastIntent);
+                launchNoTrackFoundEvent();
             }
         });
     }
 
+    private void launchNoTrackFoundEvent() {
+        SpotifyNoTrackFoundEvent event = SpotifyNoTrackFoundEvent.newInstance();
+        bus.post(event);
+    }
 }
