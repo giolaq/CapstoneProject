@@ -477,9 +477,6 @@ public class MainActivity extends FragmentActivity
         // Show sign-out button on main menu
         mMainMenuFragment.setShowSignInButton(false);
 
-        // Show "you are signed in" message on win screen, with no sign in button.
-        mWinFragment.setShowSignInButton(false);
-
         // Set the greeting appropriately on main menu
         Player p = Games.Players.getCurrentPlayer(mGoogleApiClient);
         String displayName;
@@ -535,7 +532,6 @@ public class MainActivity extends FragmentActivity
         // Sign-in failed, so show sign-in button on main menu
         mMainMenuFragment.setGreeting(getString(R.string.signed_out_greeting));
         mMainMenuFragment.setShowSignInButton(true);
-        mWinFragment.setShowSignInButton(true);
     }
 
     @Override
@@ -563,7 +559,6 @@ public class MainActivity extends FragmentActivity
 
         mMainMenuFragment.setGreeting(getString(R.string.signed_out_greeting));
         mMainMenuFragment.setShowSignInButton(true);
-        mWinFragment.setShowSignInButton(true);
     }
 
     @Override
