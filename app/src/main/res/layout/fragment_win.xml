@@ -52,39 +52,4 @@
             android:layout_marginTop="20dp" />
     </LinearLayout>
 
-    <LinearLayout android:id="@+id/win_screen_sign_in_bar"
-        android:layout_height="120dp"
-        android:layout_width="match_parent"
-        android:background="#f0f0f0"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="10dp"
-        android:visibility="gone">
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/win_screen_sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_in_to_upload_this_score"
-            android:layout_marginLeft="10dp"
-            android:textColor="#808080"
-            />
-    </LinearLayout>
-
-    <TextView android:id="@+id/win_screen_signed_in_bar"
-        android:layout_height="120dp"
-        android:layout_width="match_parent"
-        android:background="#f0f0f0"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        android:visibility="gone"
-        android:gravity="center|left"
-        android:textColor="#808080"
-        android:text="@string/you_are_signed_in" />
 </LinearLayout>

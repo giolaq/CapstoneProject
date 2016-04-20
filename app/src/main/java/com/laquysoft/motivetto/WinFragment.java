@@ -47,10 +47,7 @@ public class WinFragment extends Fragment implements OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_win, container, false);
-        v.findViewById(R.id.win_ok_button).setOnClickListener(this);
-        v.findViewById(R.id.win_screen_sign_in_button).setOnClickListener(this);
-        return v;
+        return inflater.inflate(R.layout.fragment_win, container, false);
     }
 
     public void setFinalScore(int i) {
@@ -79,23 +76,12 @@ public class WinFragment extends Fragment implements OnClickListener {
         if (scoreTv != null) scoreTv.setText(String.valueOf(mScore));
         if (explainTv != null) explainTv.setText(mExplanation);
 
-        getActivity().findViewById(R.id.win_screen_sign_in_bar).setVisibility(
-                mShowSignIn ? View.VISIBLE : View.GONE);
-        getActivity().findViewById(R.id.win_screen_signed_in_bar).setVisibility(
-                mShowSignIn ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.win_screen_sign_in_button) {
-            mListener.onWinScreenSignInClicked();
-        }
         MediaPlayerService.pauseTrack(getActivity());
         mListener.onWinScreenDismissed();
     }
 
-    public void setShowSignInButton(boolean showSignIn) {
-        mShowSignIn = showSignIn;
-        updateUi();
-    }
 }
