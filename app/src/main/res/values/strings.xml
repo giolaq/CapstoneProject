@@ -63,6 +63,10 @@
     <string name="empty_stats">No stats available</string>
     <string name="title_widget_stats">Motivetto Stats</string>
 
+    <string name="time_stats">Time: %1$s</string>
+    <string name="moves_stats">Moves: %1$s</string>
+    <string name="points_stats">Points: %1$s</string>
+
     <string-array name="words_in_track">
         <item>Help</item>
         <item>Love</item>

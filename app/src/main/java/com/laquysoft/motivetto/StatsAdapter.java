@@ -3,6 +3,7 @@ package com.laquysoft.motivetto;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,12 +87,14 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsAdapter
         String trackName = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_NAME));
         String trackSolvedTime = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME));
         String trackSolvedMoves = mCursor.getString(mCursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_MOVES));
-        String trackEarnedPoints = "earned points";
+
+        Double earnedPoints = 1000-Integer.parseInt(trackSolvedTime) * 0.5 - Integer.parseInt(trackSolvedMoves);
+        String trackEarnedPoints = Integer.toString(earnedPoints.intValue());
 
         forecastAdapterViewHolder.mTrackNameView.setText(trackName);
-        forecastAdapterViewHolder.mTrackSolvedTimeView.setText(trackSolvedTime);
-        forecastAdapterViewHolder.mTrackSolvedMoves.setText(trackSolvedMoves);
-        forecastAdapterViewHolder.mTrackEarnedPoints.setText(trackEarnedPoints);
+        forecastAdapterViewHolder.mTrackSolvedTimeView.setText(mContext.getResources().getString(R.string.time_stats, trackSolvedTime));
+        forecastAdapterViewHolder.mTrackSolvedMoves.setText(mContext.getResources().getString(R.string.moves_stats, trackSolvedMoves));
+        forecastAdapterViewHolder.mTrackEarnedPoints.setText(mContext.getResources().getString(R.string.points_stats, trackEarnedPoints));
     }
 
     @Override
