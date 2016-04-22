@@ -47,7 +47,9 @@ public class WinFragment extends Fragment implements OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_win, container, false);
+        View v = inflater.inflate(R.layout.fragment_win, container, false);
+        v.findViewById(R.id.win_ok_button).setOnClickListener(this);
+        return v;
     }
 
     public void setFinalScore(int i) {

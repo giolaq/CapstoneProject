@@ -214,7 +214,7 @@ public class GameplayFragment extends Fragment {
 
     private void retrieveSpotifyRandomSongs() {
 
-        Intent msgIntent = new Intent(getContext(), SpotifyIntentService.class);
+        Intent msgIntent = new Intent(getActivity(), SpotifyIntentService.class);
 
         msgIntent.putExtra(SpotifyIntentService.TOKEN, mListener.onAccessToken());
         getActivity().startService(msgIntent);
@@ -237,7 +237,7 @@ public class GameplayFragment extends Fragment {
 
         ArrayList<ParcelableSpotifyObject> tracks = new ArrayList<ParcelableSpotifyObject>();
         tracks.add(track);
-        MediaPlayerService.setTracks(getContext(), tracks);
+        MediaPlayerService.setTracks(getActivity(), tracks);
         startTimer();
 
     }
@@ -248,7 +248,7 @@ public class GameplayFragment extends Fragment {
         trackseconds++;
         Log.d(LOG_TAG, "trackplay " + trackPlayingEvent.getProgress());
         if (trackseconds == 3) {
-            MediaPlayerService.pauseTrack(getContext());
+            MediaPlayerService.pauseTrack(getActivity());
         }
 
     }
