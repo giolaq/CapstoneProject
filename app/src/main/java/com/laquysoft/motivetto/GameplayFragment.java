@@ -39,6 +39,8 @@ import com.laquysoft.motivetto.model.ParcelableSpotifyObject;
 import com.laquysoft.motivetto.modules.EventBusModule;
 import com.squareup.otto.Subscribe;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -80,7 +82,7 @@ public class GameplayFragment extends Fragment {
     public void incrementMovesNumber(int moves) {
         solvedMoves = moves;
         TextView movesNumber = ((TextView) getView().findViewById(R.id.moves_number));
-        movesNumber.setText(Integer.toString(moves));
+        movesNumber.setText(getActivity().getResources().getString(R.string.moves, moves));
     }
 
     public String getTrackName() {
@@ -136,6 +138,15 @@ public class GameplayFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_gameplay, container, false);
         gameBoardView = (GameBoardView) v.findViewById(R.id.gameboard);
         progressBar = (ProgressBar) v.findViewById(R.id.progress);
+
+        int minutes = 0;
+        int seconds = 0;
+        TextView tv =  (TextView) v.findViewById(R.id.timer);
+        tv.setText(getActivity().getResources().getString(R.string.timer, minutes, seconds));
+
+        int moves = 0;
+        TextView movesNumber = ((TextView) v.findViewById(R.id.moves_number));
+        movesNumber.setText(getActivity().getResources().getString(R.string.moves, moves));
         return v;
     }
 
@@ -176,12 +187,10 @@ public class GameplayFragment extends Fragment {
                     @Override
                     public void run() {
                         TextView tv = (TextView) getActivity().findViewById(R.id.timer);
-                        tv.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
+                        tv.setText(getActivity().getResources().getString(R.string.timer, minutes, seconds));
                         seconds += 1;
 
                         if (seconds == 60) {
-                            tv.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
-
                             seconds = 0;
                             minutes = minutes + 1;
 
