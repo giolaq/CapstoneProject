@@ -2,28 +2,29 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
+        android:orientation="horizontal"
         android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
-        android:paddingTop="@dimen/abc_dialog_list_padding_vertical_material"
         android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
-        android:orientation="horizontal">
+        android:paddingTop="@dimen/abc_dialog_list_padding_vertical_material">
 
         <ImageView
-            android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_tunes_icon"/>
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material"
+            android:layout_marginRight="@dimen/abc_list_item_padding_horizontal_material"
+            android:src="@drawable/ic_action_tunes_icon" />
 
         <LinearLayout
-            android:layout_height="wrap_content"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="7"
             android:orientation="vertical">
 
@@ -31,27 +32,39 @@
                 android:id="@+id/list_item_trackname_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
-            <TextView
-                android:id="@+id/list_item_tracksolvedtime_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/colorPrimary"/>
-            <TextView
-                android:id="@+id/list_item_tracksolvedmoves_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/colorPrimary"/>
             <TextView
                 android:id="@+id/list_item_trackearnedpoints_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="@color/colorPrimary" />
+
+
         </LinearLayout>
 
+
+        <TextView
+            android:id="@+id/list_item_tracksolvedtime_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="45dp"
+            android:layout_marginRight="45dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="right"
+            android:textColor="@color/colorPrimary" />
+
+        <TextView
+            android:id="@+id/list_item_tracksolvedmoves_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-light"
+            android:gravity="right"
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
+
+
 </FrameLayout>
