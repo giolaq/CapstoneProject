@@ -3,154 +3,139 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/col"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="@dimen/appbar_elevation">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:elevation="@dimen/appbar_elevation">
+            android:elevation="0dp"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:elevation="0dp"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/listPreferredItemHeight"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:contentDescription="@string/app_name"
+                android:scaleType="center"
+                android:src="@drawable/ic_motivetto_logo" />
+        </android.support.v7.widget.Toolbar>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="?attr/listPreferredItemHeight"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="?attr/actionBarSize"
-                    android:contentDescription="@string/app_name"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_motivetto_logo" />
-            </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+    <LinearLayout
+        android:id="@+id/screen_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_anchor="@+id/appbar"
+        app:layout_anchorGravity="fill">
 
         <LinearLayout
-            android:id="@+id/screen_menu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
-            app:layout_anchor="@+id/appbar"
-            app:layout_anchorGravity="fill">
+            android:padding="20dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/easy_mode_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:text="@string/easy" />
 
-                <Button
-                    android:id="@+id/easy_mode_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/easy" />
-
-                <Button
-                    android:id="@+id/hard_mode_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hard" />
-
-                <Button
-                    android:id="@+id/options_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/options" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/see_your_progress" />
-
-                <Button
-                    android:id="@+id/show_achievements_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:text="@string/show_achievements" />
-
-                <Button
-                    android:id="@+id/show_leaderboards_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/show_leaderboards" />
-
-                <Button
-                    android:id="@+id/show_stats_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/show_stats" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/sign_in_bar"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/hard_mode_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#f0f0f0"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                android:paddingRight="16dp"
-                android:paddingEnd="16dp"
-                android:paddingLeft="16dp"
-                android:paddingStart="16dp">
+                android:text="@string/hard" />
 
-                <com.google.android.gms.common.SignInButton
-                    android:id="@+id/sign_in_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/sign_in_why"
-                    android:textColor="#808080" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/sign_out_bar"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#f0f0f0"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                android:paddingRight="16dp"
-                android:paddingEnd="16dp"
-                android:paddingLeft="16dp"
-                android:paddingStart="16dp">
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/see_your_progress" />
 
+            <Button
+                android:id="@+id/show_achievements_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_achievements" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/you_are_signed_in"
-                    android:textColor="#808080" />
+            <Button
+                android:id="@+id/show_leaderboards_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_leaderboards" />
 
-                <Button
-                    android:id="@+id/sign_out_button"
-                    android:width="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sign_out"
-                    android:textSize="12sp" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/show_stats_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_stats" />
         </LinearLayout>
-    </android.support.design.widget.CoordinatorLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/sign_in_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f0f0f0"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:text="@string/sign_in_why"
+            android:textColor="#808080" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sign_out_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f0f0f0"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="@string/you_are_signed_in"
+            android:textColor="#808080" />
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="50dp"
+            android:text="@string/sign_out"
+            android:textSize="12sp" />
+    </LinearLayout>
 </FrameLayout>
