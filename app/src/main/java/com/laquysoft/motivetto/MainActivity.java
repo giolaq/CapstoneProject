@@ -26,9 +26,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.transition.AutoTransition;
 import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -41,6 +46,8 @@ import com.laquysoft.motivetto.data.StatsContract;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -144,10 +151,41 @@ public class MainActivity extends FragmentActivity
 
     // Switch UI to the given fragment
     void switchToFragment(Fragment newFrag) {
-
         getSupportFragmentManager().popBackStack(mMainMenuFragment.getClass().getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-        // Note that we need the API version check here because the actual transition classes (e.g. Fade)
+
+        // Check that the device is running lollipop
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // Inflate transitions to apply
+            Transition changeTransform = TransitionInflater.from(this).
+                    inflateTransition(R.transition.transition_button);
+            Transition explodeTransform = TransitionInflater.from(this).
+                    inflateTransition(android.R.transition.slide_bottom);
+            Transition enterTransofrm = TransitionInflater.from(this).
+                    inflateTransition(android.R.transition.slide_right);
+
+            // Setup exit transition on first fragment
+            mMainMenuFragment.setSharedElementReturnTransition(changeTransform);
+            mMainMenuFragment.setExitTransition(explodeTransform);
+
+            // Setup enter transition on second fragment
+            newFrag.setSharedElementEnterTransition(changeTransform);
+            newFrag.setEnterTransition(enterTransofrm);
+
+            // Find the shared element (in Fragment A)
+            TextView ivProfile = (TextView) findViewById(R.id.progress_txt);
+
+            // Add second fragment by replacing first
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, newFrag)
+                    .addToBackStack(mMainMenuFragment.getClass().getName())
+                    .addSharedElement(ivProfile, "profile");
+            // Apply the transaction
+            ft.commit();
+        }
+
+
+     /*   // Note that we need the API version check here because the actual transition classes (e.g. Fade)
 // are not in the support library and are only available in API 21+. The methods we are calling on the Fragment
 // ARE available in the support library (though they don't do anything on API < 21)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -157,7 +195,7 @@ public class MainActivity extends FragmentActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag)
                 .addToBackStack(mMainMenuFragment.getClass().getName())
                 .commit();
-
+*/
 
     }
 
