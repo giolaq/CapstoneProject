@@ -66,6 +66,8 @@
     <string name="time_stats">Time: %1$s</string>
     <string name="moves_stats">Moves: %1$s</string>
     <string name="points_stats">Points: %1$s</string>
+    <string name="total_tracks_solved">Total Tracks solved: %1$s</string>
+    <string name="total_points">Points: %1$s</string>
 
     <string-array name="words_in_track">
         <item>Help</item>

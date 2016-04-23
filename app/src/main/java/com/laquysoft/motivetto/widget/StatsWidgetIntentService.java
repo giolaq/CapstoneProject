@@ -64,6 +64,7 @@ public class StatsWidgetIntentService extends IntentService {
             points += 1000 / solved_moves * solved_time;
         }
 
+        int total_tracks_solved = data.getCount();
 
         data.close();
 
@@ -89,7 +90,12 @@ public class StatsWidgetIntentService extends IntentService {
             //   setRemoteContentDescription(views, description);
             //}
             //views.setTextViewText(R.id.widget_description, description);
-            views.setTextViewText(R.id.widget_points, Integer.toString(points));
+
+            views.setTextViewText(R.id.total_track_textview,
+                    getResources().getString(R.string.total_tracks_solved, total_tracks_solved));
+
+            views.setTextViewText(R.id.points_textview,
+                    getResources().getString(R.string.total_points, points));
 
             // Create an Intent to launch MainActivity
             Intent launchIntent = new Intent(this, MainActivity.class);

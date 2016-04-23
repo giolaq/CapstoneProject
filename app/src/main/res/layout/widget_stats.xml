@@ -1,44 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin">
+    android:layout_height="wrap_content"
+    android:id="@+id/widget">
 
-    <RelativeLayout
-        android:id="@+id/widget"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:orientation="horizontal"
         android:background="@color/colorPrimaryDark"
-        android:padding="8dp">
+        android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
+        android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+        android:paddingTop="@dimen/abc_dialog_list_padding_vertical_material">
 
         <ImageView
             android:id="@+id/widget_icon"
-            android:layout_width="@dimen/widget_stats_min_resize_width"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:scaleType="centerInside"
-            tools:src="@drawable/ic_motivetto_logo" />
-
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/widget_icon"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material"
+            android:layout_marginRight="@dimen/abc_list_item_padding_horizontal_material"
+            android:src="@drawable/ic_action_tunes_icon" />
 
-            <TextView
-                android:id="@+id/widget_points"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:orientation="vertical">
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:fontFamily="sans-serif"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@color/colorPrimary"
-                tools:text="48" />
+                android:src="@drawable/ic_motivetto_logo"/>
+
+            <TextView
+                android:id="@+id/total_track_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+            <TextView
+                android:id="@+id/points_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/colorAccent" />
+
 
         </LinearLayout>
-    </RelativeLayout>
+
+
+    </LinearLayout>
+
+
 </FrameLayout>
