@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -42,9 +43,14 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
 
     public GameBoardView(Context context, AttributeSet attrSet) {
         super(context, attrSet);
-        Drawable img = getResources().getDrawable(R.drawable.android);
+
+        Drawable img = ContextCompat.getDrawable(context, R.drawable.android);
         Bitmap original = ((BitmapDrawable) img).getBitmap();
-        tileServer = new TileServer(original, 3, 3, 68, mode);
+
+        Drawable imgHard = ContextCompat.getDrawable(context, R.drawable.ic_action_tunes_icon);
+        Bitmap hard = ((BitmapDrawable) imgHard).getBitmap();
+
+        tileServer = new TileServer(original, hard, 3, 3, 68, mode);
 
         createTiles();
     }
@@ -427,10 +433,13 @@ public class GameBoardView extends RelativeLayout implements View.OnTouchListene
     public void setMode(boolean mode) {
         this.mode = mode;
 
-        Drawable img = getResources().getDrawable(R.drawable.android);
+        Drawable img = ContextCompat.getDrawable(getContext(), R.drawable.android);
         Bitmap original = ((BitmapDrawable) img).getBitmap();
-        tileServer = new TileServer(original, 3, 3, 68, mode);
 
+        Drawable imgHard = ContextCompat.getDrawable(getContext(), R.drawable.ic_action_tunes_icon);
+        Bitmap hard = ((BitmapDrawable) imgHard).getBitmap();
+
+        tileServer = new TileServer(original, hard, 3, 3, 68, mode);
         createTiles();
     }
 

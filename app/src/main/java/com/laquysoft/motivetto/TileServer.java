@@ -38,15 +38,16 @@ public class TileServer {
         }
     }
 
-    Bitmap original, scaledImage;
+    Bitmap original, scaledImage, hard;
     int rows, columns, width, tileSize;
     HashSet<TilePair> slices;
     ArrayList<TilePair> unservedSlices;
     Random random;
 
-    public TileServer(Bitmap original, int rows, int columns, int tileSize, boolean mode) {
+    public TileServer(Bitmap original, Bitmap hard, int rows, int columns, int tileSize, boolean mode) {
         super();
         this.original = original;
+        this.hard = hard;
         this.rows = rows;
         this.columns = columns;
         this.tileSize = tileSize;
@@ -59,7 +60,6 @@ public class TileServer {
     protected void sliceOriginal(boolean mode) {
         int fullWidth = tileSize * rows;
         int fullHeight = tileSize * columns;
-        scaledImage = Bitmap.createScaledBitmap(original, fullWidth, fullHeight, true);
 
         int x, y;
         Bitmap bitmap;
@@ -67,14 +67,17 @@ public class TileServer {
         for (int rowI = 0; rowI < 3; rowI++) {
             for (int colI = 0; colI < 3; colI++) {
                 if (mode) {
+                    scaledImage = Bitmap.createBitmap(hard);
                     y = 0;
                     x = 0;
+                    bitmap = Bitmap.createScaledBitmap(scaledImage, tileSize, tileSize, true);
                 } else {
+                    scaledImage = Bitmap.createScaledBitmap(original, fullWidth, fullHeight, true);
                     x = rowI * tileSize;
                     y = colI * tileSize;
+                    bitmap = Bitmap.createBitmap(scaledImage, y, x, tileSize, tileSize);
                 }
 
-                bitmap = Bitmap.createBitmap(scaledImage, y, x, tileSize, tileSize);
                 int seekTime = slices.size() * 3;
 
                 //Debug Write seekTime on bitmap
@@ -86,9 +89,10 @@ public class TileServer {
                 paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)); // Text Overlapping Pattern
                 // some more settings...
 
-                canvas.drawBitmap(bitmap, 0, 0, paint);
-                canvas.drawText(Integer.toString(seekTime), 10, 10, paint);
-                //End debug
+                if (!mode) {
+                    canvas.drawBitmap(bitmap, 0, 0, paint);
+                    canvas.drawText(Integer.toString(seekTime), 10, 10, paint);
+                }
 
                 Log.d(LOG_TAG, "sliceOriginal: " + seekTime);
                 tilepair = new TilePair(bitmap, seekTime);
