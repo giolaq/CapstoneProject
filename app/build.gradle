@@ -24,6 +24,15 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+
+    signingConfigs {
+        release {
+            storeFile file("../keystore/udacity_projects.keystore")
+            storePassword "udacious"
+            keyAlias "udacity"
+            keyPassword "udacious"
+        }
+    }
     defaultConfig {
         applicationId "com.laquysoft.motivetto"
         minSdkVersion 21
@@ -35,8 +44,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
+
 
 }
 
