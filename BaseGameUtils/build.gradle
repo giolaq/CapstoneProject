@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 
-
 buildscript {
     repositories {
         jcenter()
@@ -41,4 +40,3 @@ android {
     compileSdkVersion android_compile_version
     buildToolsVersion android_version
 }
-
