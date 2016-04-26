@@ -51,13 +51,15 @@
                 android:id="@+id/easy_mode_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/easy" />
+                android:text="@string/easy"
+                android:contentDescription="@string/easy"/>
 
             <Button
                 android:id="@+id/hard_mode_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hard" />
+                android:text="@string/hard"
+                android:contentDescription="@string/hard"/>
 
 
             <TextView
@@ -73,19 +75,22 @@
                 android:id="@+id/show_achievements_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/show_achievements" />
+                android:text="@string/show_achievements"
+                android:contentDescription="@string/show_achievements"/>
 
             <Button
                 android:id="@+id/show_leaderboards_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/show_leaderboards" />
+                android:text="@string/show_leaderboards"
+                android:contentDescription="@string/show_leaderboards"/>
 
             <Button
                 android:id="@+id/show_stats_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/show_stats" />
+                android:text="@string/show_stats"
+                android:contentDescription="@string/show_stats"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -103,7 +108,8 @@
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/signing_in"/>
 
         <TextView
             android:layout_width="0dp"
@@ -111,7 +117,8 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:text="@string/sign_in_why"
-            android:textColor="#808080" />
+            android:textColor="#808080"
+            android:contentDescription="@string/sign_in_why"/>
     </LinearLayout>
 
     <LinearLayout
@@ -130,6 +137,7 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:text="@string/you_are_signed_in"
+            android:contentDescription="@string/you_are_signed_in"
             android:textColor="#808080" />
 
         <Button
@@ -138,6 +146,7 @@
             android:layout_height="wrap_content"
             android:width="50dp"
             android:text="@string/sign_out"
+            android:contentDescription="@string/sign_out"
             android:textSize="12sp" />
     </LinearLayout>
 </FrameLayout>

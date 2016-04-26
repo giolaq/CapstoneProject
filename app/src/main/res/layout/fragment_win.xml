@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ok"
             android:id="@+id/win_ok_button"
+            android:contentDescription="@string/ok"
             android:layout_marginTop="20dp" />
     </LinearLayout>
 
