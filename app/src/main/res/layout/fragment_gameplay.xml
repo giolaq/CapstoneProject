@@ -24,6 +24,8 @@
                 android:layout_height="?attr/listPreferredItemHeight"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="?attr/actionBarSize"
+                android:textStyle="bold"
+                android:textSize="25dp"
                 android:text="Gameplay" />
 
         </android.support.v7.widget.Toolbar>
