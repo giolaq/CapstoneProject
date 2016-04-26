@@ -154,18 +154,6 @@ public class MainActivity extends FragmentActivity
         }
 
 
-     /*   // Note that we need the API version check here because the actual transition classes (e.g. Fade)
-// are not in the support library and are only available in API 21+. The methods we are calling on the Fragment
-// ARE available in the support library (though they don't do anything on API < 21)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            newFrag.setEnterTransition(new AutoTransition());
-            newFrag.setExitTransition(new Fade());
-        }
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag)
-                .addToBackStack(mMainMenuFragment.getClass().getName())
-                .commit();
-*/
-
     }
 
     private boolean isSignedIn() {
@@ -570,23 +558,8 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onShowStatsButtonClicked() {
-        /*String[] projection = {StatsContract.StatsEntry.COLUMN_TRACK_NAME, StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME};
-        Cursor cursor = getContentResolver().query(
-                StatsContract.StatsEntry.CONTENT_URI, projection, null,
-                null, null);
-        if (null != cursor) {
-            try {
-                while (cursor.moveToNext()) {
-                    String trackName = cursor.getString(cursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_NAME));
-                    int solvedTime = cursor.getInt(cursor.getColumnIndex(StatsContract.StatsEntry.COLUMN_TRACK_SOLVED_TIME));
-                    Log.d(LOG_TAG, "stat " + trackName + " " + solvedTime);
-                }
-            } finally {
-                cursor.close();
-            }
-        }*/
-        switchToFragment(mStatsFragment);
 
+        switchToFragment(mStatsFragment);
 
     }
 
