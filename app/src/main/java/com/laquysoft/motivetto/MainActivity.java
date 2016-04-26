@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2013 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.laquysoft.motivetto;
 
 import android.content.ContentUris;
@@ -50,21 +34,6 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import org.w3c.dom.Text;
 
 
-/**
- * Our main activity for the game.
- * <p/>
- * IMPORTANT: Before attempting to run this sample, please change
- * the package name to your own package name (not com.android.*) and
- * replace the IDs on res/values/ids.xml by your own IDs (you must
- * create a game in the developer console to get those IDs).
- * <p/>
- * This is a very simple game where the user selects "easy mode" or
- * "hard mode" and then the "gameplay" consists of inputting the
- * desired score (0 to 9999). In easy mode, you get the score you
- * request; in hard mode, you get half.
- *
- * @author Bruno Oliveira
- */
 public class MainActivity extends FragmentActivity
         implements MainMenuFragment.Listener,
         GameplayFragment.Listener, WinFragment.Listener,
